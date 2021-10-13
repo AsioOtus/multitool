@@ -1,5 +1,5 @@
 import XCTest
-import MultitoolBase
+@testable import Multitool
 
 class DispatchResetableFirstTests: XCTestCase {
 	func testDefaultCase () {

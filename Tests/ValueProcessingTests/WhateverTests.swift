@@ -1,5 +1,5 @@
 import XCTest
-@testable import MultitoolBase
+@testable import Multitool
 
 class WhateverTests: XCTestCase {
 	func testStandard () {

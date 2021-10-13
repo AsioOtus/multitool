@@ -20,5 +20,11 @@ let package = Package(
 		.testTarget(
 			name: "CoreTests",
 			dependencies: ["Multitool"]),
+		.testTarget(
+			name: "DispatchTests",
+			dependencies: ["Multitool"]),
+		.testTarget(
+			name: "ValueProcessingTests",
+			dependencies: ["Multitool"]),
 	]
 )

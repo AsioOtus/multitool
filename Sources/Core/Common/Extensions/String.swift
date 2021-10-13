@@ -1,36 +1,5 @@
 import Foundation
 
-extension String {
-	public enum Side {
-		case start
-		case end
-	}
-}
-
-public extension String {
-	static let controlCharacters = [
-		"\n",
-		"\t"
-	]
-	
-	static let escapedControlCharacter = [
-		"\n": "\\n",
-		"\t": "\\t"
-	]
-	
-	static let newLine = "\n"
-}
-
-
-
-public extension String {
-	func `repeat` (_ count: Int) -> String {
-		return String(repeating: self, count: count)
-	}
-}
-
-
-
 public extension String {
 	static let defaultGroupSeparator = " "
 
@@ -77,15 +46,11 @@ public extension String {
 	}
 }
 
-
-
 public extension String {
 	var reversed: String {
 		return String(self.reversed())
 	}
 }
-
-
 
 public extension String {
 	subscript (safe offset: Int) -> Character? {
@@ -107,23 +72,6 @@ public extension String {
 	}
 }
 
-
-
-public extension String {
-	var escaped: String {
-		var escapedString = self
-		
-		for controlCharacter in String.controlCharacters {
-			guard let escapedControlCharacter = String.escapedControlCharacter[controlCharacter] else { continue }
-			escapedString = escapedString.replacingOccurrences(of: "\n", with: escapedControlCharacter)
-		}
-		
-		return escapedString
-	}
-}
-
-
-
 public extension String {
 	var base64Encoded: String {
 		let encodedString = self.data(using: .utf8)!.base64EncodedString()
@@ -136,7 +84,7 @@ public extension String {
 		return decodedString
 	}
 	
-	init? (base64 string: String) {
+	init? (fromBase64 string: String) {
 		guard let decodedString = string.base64Decoded else { return nil }
 		self = decodedString
 	}
@@ -145,8 +93,6 @@ public extension String {
 		self = string.base64Encoded
 	}
 }
-
-
 
 public extension String {
 	var isHex: Bool {
