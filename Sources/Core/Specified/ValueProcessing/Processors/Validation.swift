@@ -3,7 +3,7 @@ public extension Validation {
 		case success
 		case failure
 		
-		public init (_ bool: Bool) {
+		public init (bool: Bool) {
 			self = bool ? .success : .failure
 		}
 	}
@@ -34,6 +34,10 @@ public struct Validation <Value, Failure>: ProcessorProtocol {
 		self.action = action
 	}
 	
+	public init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Bool) {
+		self.init(label: label, failure, { .init(bool: action($0)) })
+	}
+	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		let actionResult = action(value)
 		return .init(actionResult, value, failure, label)
@@ -42,43 +46,37 @@ public struct Validation <Value, Failure>: ProcessorProtocol {
 
 public extension AnyProcessor where Value == String {
 	static func longerThan (_ length: Int, _ failure: Failure? = nil) -> Self {
-		Validation(label: "Longer than \(length)", failure) { value in
-			.init(value.count > length)
-		}
+		Validation(label: "Longer than \(length)", failure) { value in value.count > length }
 		.eraseToAnyProcessor()
 	}
 	
 	static func countEqualsTo (_ length: Int, _ failure: Failure? = nil) -> Self {
-		Validation(label: "Count equals to \(length)", failure) { value in
-			.init(value.count == length)
-		}
+		Validation(label: "Count equals to \(length)", failure) { value in value.count == length }
 		.eraseToAnyProcessor()
 	}
 	
 	static func equalsTo (_ string: String, _ failure: Failure? = nil) -> Self {
-		Validation(label: "Equals to \"\(string)\"", failure) { value in
-			.init(value == string)
-		}
+		Validation(label: "Equals to \"\(string)\"", failure) { value in value == string }
 		.eraseToAnyProcessor()
 	}
 	
 	static func startsWith (_ string: String, _ failure: Failure? = nil) -> Self {
-		Validation(label: "Starts with \"\(string)\"", failure) { value in
-			.init(value.starts(with: string))
-		}
+		Validation(label: "Starts with \"\(string)\"", failure) { value in value.starts(with: string) }
 		.eraseToAnyProcessor()
 	}
 	
 	static func endsWith (_ string: String, _ failure: Failure? = nil) -> Self {
-		Validation(label: "Ends with \"\(string)\"", failure) { value in
-			.init(value.hasSuffix(string))
-		}
+		Validation(label: "Ends with \"\(string)\"", failure) { value in value.hasSuffix(string) }
 		.eraseToAnyProcessor()
 	}
 }
 
 public extension AnyProcessor {
 	static func validate (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Validation<Value, Failure>.ActionResult) -> Self {
+		Validation(label: label, failure, action).eraseToAnyProcessor()
+	}
+	
+	static func validate (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Bool) -> Self {
 		Validation(label: label, failure, action).eraseToAnyProcessor()
 	}
 	

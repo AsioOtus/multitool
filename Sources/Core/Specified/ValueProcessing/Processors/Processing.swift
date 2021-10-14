@@ -36,9 +36,7 @@ public struct Processing <Value, Failure>: ProcessorProtocol {
 	}
 	
 	public init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Value) {
-		self.label = label
-		self.failure = failure
-		self.action =  { .success(action($0)) }
+		self.init(label: label, failure, { .success(action($0)) })
 	}
 	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
