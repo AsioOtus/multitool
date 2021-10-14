@@ -1,9 +1,9 @@
 extension Every {
-	struct Result: MultipleResultProtocol {
-		let results: [ProcessingResult<Value, Failure>]
-		let summaryResult: SingleResult<Value, Failure>
+	public struct Result: MultipleResultProtocol {
+		public let results: [ProcessingResult<Value, Failure>]
+		public let summaryResult: SingleResult<Value, Failure>
 		
-		init (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ label: String? = nil) {
+		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ label: String? = nil) {
 			self.results = results
 			self.summaryResult = {
 				guard !results.isEmpty else { return .init(.success(value), Every.name) }
@@ -18,19 +18,19 @@ extension Every {
 	}
 }
 
-struct Every <Value, Failure>: ProcessorProtocol {
-	static var name: String { "every" }
+public struct Every <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "every" }
 	
-	let failure: Failure?
+	public let failure: Failure?
 	
-	let processors: [AnyProcessor<Value, Failure>]
+	public let processors: [AnyProcessor<Value, Failure>]
 	
-	init (failure: Failure? = nil, _ processors: [AnyProcessor<Value, Failure>]) {
+	public init (failure: Failure? = nil, _ processors: [AnyProcessor<Value, Failure>]) {
 		self.failure = failure
 		self.processors = processors
 	}
 	
-	func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
 		var value = value
@@ -47,7 +47,7 @@ struct Every <Value, Failure>: ProcessorProtocol {
 	}
 }
 
-extension AnyProcessor {
+public extension AnyProcessor {
 	static func every (_ processors: [Self]) -> Self {
 		Every(processors).eraseToAnyProcessor()
 	}

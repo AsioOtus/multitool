@@ -1,15 +1,15 @@
-extension Validation {
+public extension Validation {
 	enum ActionResult {
 		case success
 		case failure
 		
-		init (_ bool: Bool) {
+		public init (_ bool: Bool) {
 			self = bool ? .success : .failure
 		}
 	}
 }
 
-extension ProcessingResult {
+public extension ProcessingResult {
 	init (_ validationResult: Validation<Value, Failure>.ActionResult, _ value: Value, _ failure: Failure? = nil, _ label: String? = nil) {
 		switch validationResult {
 		case .success:
@@ -21,26 +21,26 @@ extension ProcessingResult {
 	}
 }
 
-struct Validation <Value, Failure>: ProcessorProtocol {
-	static var name: String { "validation" }
+public struct Validation <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "validation" }
 	
-	let label: String?
-	let failure: Failure?
-	let action: (Value) -> (ActionResult)
+	public let label: String?
+	public let failure: Failure?
+	public let action: (Value) -> (ActionResult)
 	
-	init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> (ActionResult)) {
+	public init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> (ActionResult)) {
 		self.label = label
 		self.failure = failure
 		self.action = action
 	}
 	
-	func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		let actionResult = action(value)
 		return .init(actionResult, value, failure, label)
 	}
 }
 
-extension AnyProcessor where Value == String {
+public extension AnyProcessor where Value == String {
 	static func longerThan (_ length: Int, _ failure: Failure? = nil) -> Self {
 		Validation(label: "Longer than \(length)", failure) { value in
 			.init(value.count > length)
@@ -77,7 +77,7 @@ extension AnyProcessor where Value == String {
 	}
 }
 
-extension AnyProcessor {
+public extension AnyProcessor {
 	static func validate (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Validation<Value, Failure>.ActionResult) -> Self {
 		Validation(label: label, failure, action).eraseToAnyProcessor()
 	}

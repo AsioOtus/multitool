@@ -1,20 +1,20 @@
-struct ValueProcessor <Value, Failure>: ProcessorProtocol {
-	static var name: String { "value" }
+public struct ValueProcessor <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "value" }
 	
-	let label: String?
-	let value: Value
+	public let label: String?
+	public let value: Value
 	
-	init (label: String? = nil, _ value: Value) {
+	public init (label: String? = nil, _ value: Value) {
 		self.label = label
 		self.value = value
 	}
 	
-	func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		.single(.init(.success(self.value), ValueProcessor.name, label))
 	}
 }
 
-extension AnyProcessor {
+public extension AnyProcessor {
 	static func value (label: String? = nil, _ value: Value) -> Self {
 		ValueProcessor(label: label, value).eraseToAnyProcessor()
 	}

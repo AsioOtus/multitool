@@ -1,9 +1,9 @@
 extension First {
-	struct Result: MultipleResultProtocol {
-		let results: [ProcessingResult<Value, Failure>]
-		let summaryResult: SingleResult<Value, Failure>
+	public struct Result: MultipleResultProtocol {
+		public let results: [ProcessingResult<Value, Failure>]
+		public let summaryResult: SingleResult<Value, Failure>
 		
-		init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
+		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
 			self.results = results
 			self.summaryResult = {
 				guard !results.isEmpty else { return .init(.success(value), First.name) }
@@ -21,16 +21,16 @@ extension First {
 	}
 }
 
-struct First <Value, Failure>: ProcessorProtocol {
-	static var name: String { "first" }
+public struct First <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "first" }
 	
-	let processors: [AnyProcessor<Value, Failure>]
+	public let processors: [AnyProcessor<Value, Failure>]
 	
-	init (_ processors: [AnyProcessor<Value, Failure>]) {
+	public init (_ processors: [AnyProcessor<Value, Failure>]) {
 		self.processors = processors
 	}
 	
-	func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
 		for processor in processors {
@@ -44,7 +44,7 @@ struct First <Value, Failure>: ProcessorProtocol {
 	}
 }
 
-extension AnyProcessor {
+public extension AnyProcessor {
 	static func first (_ processors: [Self]) -> Self {
 		First(processors).eraseToAnyProcessor()
 	}

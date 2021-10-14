@@ -1,15 +1,15 @@
 extension Processing {
-	enum ActionResult {
+	public enum ActionResult {
 		case success(Value)
 		case failure
 		
-		init (_ bool: Bool, _ value: Value) {
+		public init (_ bool: Bool, _ value: Value) {
 			self = bool ? .success(value) : .failure
 		}
 	}
 }
 
-extension ProcessingResult {
+public extension ProcessingResult {
 	init (_ processingResult: Processing<Value, Failure>.ActionResult, _ value: Value, _ failure: Failure? = nil, _ label: String? = nil) {
 		switch processingResult {
 		case let .success(value):
@@ -21,27 +21,27 @@ extension ProcessingResult {
 	}
 }
 
-struct Processing <Value, Failure>: ProcessorProtocol {
-	static var name: String { "processing" }
+public struct Processing <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "processing" }
 	
-	let label: String?
+	public let label: String?
 	
-	let action: (Value) -> ActionResult
-	let failure: Failure?
+	public let action: (Value) -> ActionResult
+	public let failure: Failure?
 	
-	init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> ActionResult) {
+	public init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> ActionResult) {
 		self.label = label
 		self.failure = failure
 		self.action = action
 	}
 	
-	func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		let actionResult = action(value)
 		return .init(actionResult, value, failure, label)
 	}
 }
 
-extension AnyProcessor {
+public extension AnyProcessor {
 	static func process (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Processing<Value, Failure>.ActionResult) -> Self {
 		Processing(label: label, failure, action).eraseToAnyProcessor()
 	}
