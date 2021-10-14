@@ -52,6 +52,10 @@ public extension AnyProcessor {
 		Processing(label: label, failure, action).eraseToAnyProcessor()
 	}
 	
+	static func process (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Value) -> Self {
+		Processing(label: label, failure, action).eraseToAnyProcessor()
+	}
+	
 	static func process (_ processing: Processing<Value, Failure>) -> Self {
 		processing.eraseToAnyProcessor()
 	}
