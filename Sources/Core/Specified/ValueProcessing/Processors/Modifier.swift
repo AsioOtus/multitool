@@ -1,27 +1,27 @@
 public struct Modifier <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "modifier" }
+	
 	public let label: String?
 	
 	public let modification: (Value) -> Value
-	public let processor: AnyProcessor<Value, Failure>
 	
-	public init (label: String? = nil, _ modification: @escaping (Value) -> Value, _ processor: AnyProcessor<Value, Failure>) {
+	public init (label: String? = nil, modification: @escaping (Value) -> Value) {
 		self.label = label
 		self.modification = modification
-		self.processor = processor
 	}
 	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
-		let modifiedValue = modification(value)
-		return processor.process(modifiedValue)
+		let modifiedValue = modification(value)		
+		return .single(.init(.success(modifiedValue), Self.name, label))
 	}
 }
 
 public extension AnyProcessor {
-	static func modifier (label: String? = nil, _ modification: @escaping (Value) -> Value, _ processor: AnyProcessor<Value, Failure>) -> Self {
-		Modifier(label: label, modification, processor).eraseToAnyProcessor()
+	static func modify (label: String? = nil, modification: @escaping (Value) -> Value) -> Self {
+		Modifier(label: label, modification: modification).eraseToAnyProcessor()
 	}
 	
-	static func modifier (_ modifier: Modifier<Value, Failure>) -> Self {
+	static func modify (_ modifier: Modifier<Value, Failure>) -> Self {
 		modifier.eraseToAnyProcessor()
 	}
 }

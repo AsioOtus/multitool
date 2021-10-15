@@ -11,16 +11,20 @@ public struct Validation <Value, Failure>: ProcessorProtocol {
 	
 	public let label: String?
 	public let failure: Failure
-	public let action: (Value) -> Bool
+	public let predicate: (Value) -> Bool
 	
-	public init (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Bool) {
+	public init (label: String? = nil, failure: Failure, predicate: @escaping (Value) -> Bool) {
 		self.label = label
 		self.failure = failure
-		self.action = action
+		self.predicate = predicate
+	}
+	
+	public init (label: String? = nil, failure: Failure, predicate: @escaping () -> Bool) {
+		self.init(label: label, failure: failure, predicate: { _ in predicate() })
 	}
 	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
-		let actionResult = action(value)
+		let actionResult = predicate(value)
 		return .init(actionResult, value, failure, label)
 	}
 }
@@ -53,8 +57,12 @@ public extension AnyProcessor where Value == String {
 }
 
 public extension AnyProcessor {
-	static func validate (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Bool) -> Self {
-		Validation(label: label, failure: failure, action).eraseToAnyProcessor()
+	static func validate (label: String? = nil, failure: Failure, predicate: @escaping (Value) -> Bool) -> Self {
+		Validation(label: label, failure: failure, predicate: predicate).eraseToAnyProcessor()
+	}
+	
+	static func validate (label: String? = nil, failure: Failure, predicate: @escaping () -> Bool) -> Self {
+		Validation(label: label, failure: failure, predicate: predicate).eraseToAnyProcessor()
 	}
 	
 	static func validate (_ validation: Validation<Value, Failure>) -> Self {

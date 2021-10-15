@@ -1,7 +1,7 @@
 public struct Custom <Value, Failure>: ProcessorProtocol {
 	public let action: (Value) -> ProcessingResult<Value, Failure>
 	
-	public init (_ action: @escaping (Value) -> ProcessingResult<Value, Failure>) {
+	public init (action: @escaping (Value) -> ProcessingResult<Value, Failure>) {
 		self.action = action
 	}
 	
@@ -11,7 +11,7 @@ public struct Custom <Value, Failure>: ProcessorProtocol {
 }
 
 public extension AnyProcessor {
-	static func custom (_ action: @escaping (Value) -> ProcessingResult<Value, Failure>) -> AnyProcessor {
-		Custom(action).eraseToAnyProcessor()
+	static func custom (action: @escaping (Value) -> ProcessingResult<Value, Failure>) -> AnyProcessor {
+		Custom(action: action).eraseToAnyProcessor()
 	}
 }

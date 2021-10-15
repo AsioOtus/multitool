@@ -26,32 +26,32 @@ public struct Processing <Value, Failure>: ProcessorProtocol {
 	
 	public let label: String?
 	
-	public let action: (Value) -> ActionResult
+	public let processing: (Value) -> ActionResult
 	public let failure: Failure
 	
-	public init (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> ActionResult) {
+	public init (label: String? = nil, failure: Failure, processing: @escaping (Value) -> ActionResult) {
 		self.label = label
 		self.failure = failure
-		self.action = action
+		self.processing = processing
 	}
 	
-	public init (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Value) {
-		self.init(label: label, failure: failure, { .success(action($0)) })
+	public init (label: String? = nil, failure: Failure, processing: @escaping (Value) -> Value) {
+		self.init(label: label, failure: failure, processing: { .success(processing($0)) })
 	}
 	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
-		let actionResult = action(value)
+		let actionResult = processing(value)
 		return .init(actionResult, value, failure, label)
 	}
 }
 
 public extension AnyProcessor {
-	static func process (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Processing<Value, Failure>.ActionResult) -> Self {
-		Processing(label: label, failure: failure, action).eraseToAnyProcessor()
+	static func process (label: String? = nil, failure: Failure, processing: @escaping (Value) -> Processing<Value, Failure>.ActionResult) -> Self {
+		Processing(label: label, failure: failure, processing: processing).eraseToAnyProcessor()
 	}
 	
-	static func process (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Value) -> Self {
-		Processing(label: label, failure: failure, action).eraseToAnyProcessor()
+	static func process (label: String? = nil, failure: Failure, processing: @escaping (Value) -> Value) -> Self {
+		Processing(label: label, failure: failure, processing: processing).eraseToAnyProcessor()
 	}
 	
 	static func process (_ processing: Processing<Value, Failure>) -> Self {
