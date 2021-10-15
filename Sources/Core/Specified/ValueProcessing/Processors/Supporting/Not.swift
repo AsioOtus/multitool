@@ -4,7 +4,7 @@ public struct Not <Value, Failure>: ProcessorProtocol {
 	public let processor: AnyProcessor<Value, Failure>
 	public let failure: Failure
 	
-	public init (_ processor: AnyProcessor<Value, Failure>, failure: Failure) {
+	public init (failure: Failure, _ processor: AnyProcessor<Value, Failure>) {
 		self.processor = processor
 		self.failure = failure
 	}
@@ -21,12 +21,12 @@ public struct Not <Value, Failure>: ProcessorProtocol {
 
 public extension AnyProcessor {
 	static func not (_ processor: AnyProcessor<Value, Failure>, failure: Failure) -> Self {
-		Not(processor, failure: failure).eraseToAnyProcessor()
+		Not(failure: failure, processor).eraseToAnyProcessor()
 	}
 }
 
 public extension AnyProcessor where Failure == Optional<Any> {
 	static func not (_ processor: AnyProcessor<Value, Failure>, failure: Failure = nil) -> Self {
-		Not(processor, failure: failure).eraseToAnyProcessor()
+		Not(failure: failure, processor).eraseToAnyProcessor()
 	}
 }

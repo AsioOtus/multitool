@@ -1,8 +1,9 @@
 public struct FailureProcessor <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "failure" }
 	
-	public let label: String?
 	public let failure: Failure
+	
+	public let label: String?
 	
 	public init (label: String? = nil, _ failure: Failure) {
 		self.label = label

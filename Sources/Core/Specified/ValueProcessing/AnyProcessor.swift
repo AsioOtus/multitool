@@ -1,4 +1,6 @@
 public struct AnyProcessor<Value, Failure>: ProcessorProtocol {
+	public static var name: String { "any processor" }
+	
 	public let processing: (Value) -> ProcessingResult<Value, Failure>
 	
 	public init <Processor: ProcessorProtocol> (_ processor: Processor) where Processor.Value == Value, Processor.Failure == Failure {

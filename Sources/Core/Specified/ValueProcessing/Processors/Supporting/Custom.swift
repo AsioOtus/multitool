@@ -1,4 +1,6 @@
 public struct Custom <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "custom" }
+	
 	public let action: (Value) -> ProcessingResult<Value, Failure>
 	
 	public init (action: @escaping (Value) -> ProcessingResult<Value, Failure>) {

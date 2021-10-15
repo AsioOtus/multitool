@@ -3,11 +3,9 @@ extension Whatever {
 		public let results: [ProcessingResult<Value, Failure>]
 		public let summary: SingleResult<Value, Failure>
 		
-		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
+		init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
 			self.results = results
-			self.summary = {
-				return .init(.success(value), Whatever.name)
-			}()
+			self.summary = { .init(.success(value), Whatever.name) }()
 		}
 	}
 }
