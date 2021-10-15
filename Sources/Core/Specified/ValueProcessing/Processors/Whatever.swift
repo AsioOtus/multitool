@@ -1,11 +1,11 @@
 extension Whatever {
 	public struct Result: MultipleResultProtocol {
 		public let results: [ProcessingResult<Value, Failure>]
-		public let summaryResult: SingleResult<Value, Failure>
+		public let summary: SingleResult<Value, Failure>
 		
 		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
 			self.results = results
-			self.summaryResult = {
+			self.summary = {
 				return .init(.success(value), Whatever.name)
 			}()
 		}
@@ -29,7 +29,7 @@ public struct Whatever <Value, Failure>: ProcessorProtocol {
 			let result = processor.process(value)
 			results.append(result)
 			
-			if case .success(let processedValue) = result.summaryResult.category {
+			if case .success(let processedValue) = result.summary.outcome {
 				value = processedValue
 			}
 		}

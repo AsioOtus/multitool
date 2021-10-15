@@ -10,7 +10,7 @@ extension Processing {
 }
 
 public extension ProcessingResult {
-	init (_ processingResult: Processing<Value, Failure>.ActionResult, _ value: Value, _ failure: Failure? = nil, _ label: String? = nil) {
+	init (_ processingResult: Processing<Value, Failure>.ActionResult, _ value: Value, _ failure: Failure, _ label: String? = nil) {
 		switch processingResult {
 		case let .success(value):
 			self = .single(.init(.success(value), Processing<Value, Failure>.name, label))
@@ -27,16 +27,16 @@ public struct Processing <Value, Failure>: ProcessorProtocol {
 	public let label: String?
 	
 	public let action: (Value) -> ActionResult
-	public let failure: Failure?
+	public let failure: Failure
 	
-	public init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> ActionResult) {
+	public init (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> ActionResult) {
 		self.label = label
 		self.failure = failure
 		self.action = action
 	}
 	
-	public init (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Value) {
-		self.init(label: label, failure, { .success(action($0)) })
+	public init (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Value) {
+		self.init(label: label, failure: failure, { .success(action($0)) })
 	}
 	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
@@ -46,12 +46,12 @@ public struct Processing <Value, Failure>: ProcessorProtocol {
 }
 
 public extension AnyProcessor {
-	static func process (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Processing<Value, Failure>.ActionResult) -> Self {
-		Processing(label: label, failure, action).eraseToAnyProcessor()
+	static func process (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Processing<Value, Failure>.ActionResult) -> Self {
+		Processing(label: label, failure: failure, action).eraseToAnyProcessor()
 	}
 	
-	static func process (label: String? = nil, _ failure: Failure? = nil, _ action: @escaping (Value) -> Value) -> Self {
-		Processing(label: label, failure, action).eraseToAnyProcessor()
+	static func process (label: String? = nil, failure: Failure, _ action: @escaping (Value) -> Value) -> Self {
+		Processing(label: label, failure: failure, action).eraseToAnyProcessor()
 	}
 	
 	static func process (_ processing: Processing<Value, Failure>) -> Self {

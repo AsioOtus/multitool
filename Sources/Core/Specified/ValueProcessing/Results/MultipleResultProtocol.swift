@@ -3,7 +3,7 @@ public protocol MultipleResultProtocol {
 	associatedtype Failure
 	
 	var results: [ProcessingResult<Value, Failure>] { get }
-	var summaryResult: SingleResult<Value, Failure> { get }
+	var summary: SingleResult<Value, Failure> { get }
 }
 
 public extension MultipleResultProtocol {
@@ -17,6 +17,6 @@ public extension MultipleResultProtocol {
 			}
 			.joined(separator: "\n")
 		
-		return "\(summaryResult.description) {\(resultsDescription.isEmpty ? " " : "\n\(resultsDescription)\n")}"
+		return "\(summary.description) {\(resultsDescription.isEmpty ? " " : "\n\(resultsDescription)\n")}"
 	}
 }

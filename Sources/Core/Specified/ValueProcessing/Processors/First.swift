@@ -1,20 +1,17 @@
 extension First {
 	public struct Result: MultipleResultProtocol {
 		public let results: [ProcessingResult<Value, Failure>]
-		public let summaryResult: SingleResult<Value, Failure>
+		public let summary: SingleResult<Value, Failure>
 		
 		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
 			self.results = results
-			self.summaryResult = {
-				guard !results.isEmpty else { return .init(.success(value), First.name) }
-				
-				if let firstSuccessResult = results.first(where: {
-					if case .success = $0.summaryResult.category { return true }
-					else { return false }
-				}) {
-					return .init(firstSuccessResult.summaryResult.category, First.name, firstSuccessResult.summaryResult.label)
+			self.summary = {
+				if let firstSuccessResult = results.first(where: { $0.summary.outcome.isSuccess }) {
+					return .init(firstSuccessResult.summary.outcome, First.name, firstSuccessResult.summary.label)
+				} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
+					return .init(lastFailureResult.summary.outcome, First.name)
 				} else {
-					return .init(.failure(), First.name)
+					return .init(.success(value), First.name)
 				}
 			}()
 		}
@@ -37,7 +34,7 @@ public struct First <Value, Failure>: ProcessorProtocol {
 			let result = processor.process(value)
 			results.append(result)
 			
-			guard case .failure = result.summaryResult.category else { break }
+			guard case .failure = result.summary.outcome else { break }
 		}
 		
 		return .multiple(Result(results, value).eraseToAnyMultipleResult())

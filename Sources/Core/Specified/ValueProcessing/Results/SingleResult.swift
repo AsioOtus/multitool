@@ -1,7 +1,7 @@
-public extension SingleResult {
-	enum Category {
+extension SingleResult {
+	public enum Outcome {
 		case success(Value)
-		case failure(Failure? = nil)
+		case failure(Failure)
 		
 		public var isSuccess: Bool {
 			switch self {
@@ -15,26 +15,23 @@ public extension SingleResult {
 			case .success(let value):
 				return "SUCCESS(\(value))"
 				
-			case .failure(.some(let failure)):
+			case .failure(let failure):
 				return "FAILURE(\(String(describing: failure)))"
-				
-			case .failure(.none):
-				return "FAILURE()"
 			}
 		}
 	}
 }
 
 public struct SingleResult <Value, Failure> {
-	public let category: Category
-	public let typeName: String
+	public let outcome: Outcome
+	public let name: String
 	public let label: String?
 	
-	public var description: String { "\(typeName.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(category.description)" }
+	public var description: String { "\(name.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
 	
-	public init (_ category: Category, _ typeName: String, _ label: String? = nil) {
-		self.category = category
-		self.typeName = typeName
+	public init (_ outcome: Outcome, _ name: String, _ label: String? = nil) {
+		self.outcome = outcome
+		self.name = name
 		self.label = label
 	}
 }

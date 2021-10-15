@@ -1,20 +1,19 @@
 extension Last {
 	public struct Result: MultipleResultProtocol {
 		public let results: [ProcessingResult<Value, Failure>]
-		public let summaryResult: SingleResult<Value, Failure>
+		public let summary: SingleResult<Value, Failure>
 		
 		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ label: String? = nil) {
 			self.results = results
-			self.summaryResult = {
-				guard !results.isEmpty else { return .init(.success(value), Last.name) }
-				
-				if let lastSuccessResult = results.last(where: {
-					if case .success = $0.summaryResult.category { return true }
-					else { return false }
-				}) {
-					return .init(lastSuccessResult.summaryResult.category, Last.name, lastSuccessResult.summaryResult.label)
+			self.summary = {
+				if let lastSuccessResult = results.last(where: { $0.summary.outcome.isSuccess }) {
+					return .init(lastSuccessResult.summary.outcome, Last.name, lastSuccessResult.summary.label)
+					
+				} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
+					return .init(lastFailureResult.summary.outcome, Last.name)
+					
 				} else {
-					return .init(.failure(), Last.name)
+					return .init(.success(value), Last.name)
 				}
 			}()
 		}
@@ -24,12 +23,9 @@ extension Last {
 public struct Last <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "last" }
 	
-	public let failure: Failure?
-	
 	public let processors: [AnyProcessor<Value, Failure>]
 	
-	public init (failure: Failure? = nil, _ processors: [AnyProcessor<Value, Failure>]) {
-		self.failure = failure
+	public init (_ processors: [AnyProcessor<Value, Failure>]) {
 		self.processors = processors
 	}
 	
@@ -41,7 +37,7 @@ public struct Last <Value, Failure>: ProcessorProtocol {
 			let result = processor.process(value)
 			results.append(result)
 			
-			guard case .success(let processedValue) = result.summaryResult.category else { continue }
+			guard case .success(let processedValue) = result.summary.outcome else { continue }
 			value = processedValue
 		}
 		

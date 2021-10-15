@@ -2,16 +2,16 @@ public struct Not <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "not" }
 	
 	public let processor: AnyProcessor<Value, Failure>
-	public let failure: Failure?
+	public let failure: Failure
 	
-	public init (_ processor: AnyProcessor<Value, Failure>, _ failure: Failure? = nil) {
+	public init (_ processor: AnyProcessor<Value, Failure>, failure: Failure) {
 		self.processor = processor
 		self.failure = failure
 	}
 	
 	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
 		let processingResult = processor.process(value)
-		if case .success = processingResult.summaryResult.category {
+		if case .success = processingResult.summary.outcome {
 			return .single(.init(.failure(failure), Not.name, label))
 		} else {
 			return .single(.init(.success(value), Not.name, label))
@@ -20,7 +20,13 @@ public struct Not <Value, Failure>: ProcessorProtocol {
 }
 
 public extension AnyProcessor {
-	static func not (_ processor: AnyProcessor<Value, Failure>, _ failure: Failure? = nil) -> Self {
-		Not(processor, failure).eraseToAnyProcessor()
+	static func not (_ processor: AnyProcessor<Value, Failure>, failure: Failure) -> Self {
+		Not(processor, failure: failure).eraseToAnyProcessor()
+	}
+}
+
+public extension AnyProcessor where Failure == Optional<Any> {
+	static func not (_ processor: AnyProcessor<Value, Failure>, failure: Failure = nil) -> Self {
+		Not(processor, failure: failure).eraseToAnyProcessor()
 	}
 }

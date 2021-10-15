@@ -11,11 +11,9 @@ class EveryTests: XCTestCase {
 	}
 	
 	func testStandard () {
-		let validation = AnyProcessor<String, String>
+		let validation = AnyProcessor<String, String?>
 			.every([
-				.process { .success($0 + "456") },
-				.process { .success($0 + "789") },
-				.failure()
+				.process(failure: nil) { $0 + "123" }
 			])
 		
 		let validationResult = validation.process("123")
@@ -23,10 +21,10 @@ class EveryTests: XCTestCase {
 	}
 	
 	func testAllFailures () {
-		let validation = AnyProcessor<String, String>
+		let validation = AnyProcessor<String, String?>
 			.every([
-				.failure(),
-				.failure()
+				.failure(nil),
+				.failure(nil)
 			])
 		
 		let validationResult = validation.process("123")

@@ -1,17 +1,19 @@
 extension Every {
 	public struct Result: MultipleResultProtocol {
 		public let results: [ProcessingResult<Value, Failure>]
-		public let summaryResult: SingleResult<Value, Failure>
+		public let summary: SingleResult<Value, Failure>
 		
 		public init (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ label: String? = nil) {
 			self.results = results
-			self.summaryResult = {
-				guard !results.isEmpty else { return .init(.success(value), Every.name) }
-				
-				if let lastSuccessResult = results.last(where: { $0.summaryResult.category.isSuccess }) {
-					return .init(lastSuccessResult.summaryResult.category, Every.name, lastSuccessResult.summaryResult.label)
+			self.summary = {
+				if let firstSuccessResult = results.last(where: { $0.summary.outcome.isSuccess }) {
+					return .init(firstSuccessResult.summary.outcome, Every.name)
+					
+				} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
+					return .init(lastFailureResult.summary.outcome, Every.name)
+					
 				} else {
-					return .init(.failure(), Every.name)
+					return .init(.success(value), Every.name)
 				}
 			}()
 		}
@@ -21,12 +23,9 @@ extension Every {
 public struct Every <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "every" }
 	
-	public let failure: Failure?
-	
 	public let processors: [AnyProcessor<Value, Failure>]
 	
-	public init (failure: Failure? = nil, _ processors: [AnyProcessor<Value, Failure>]) {
-		self.failure = failure
+	public init (_ processors: [AnyProcessor<Value, Failure>]) {
 		self.processors = processors
 	}
 	
@@ -38,7 +37,7 @@ public struct Every <Value, Failure>: ProcessorProtocol {
 			let result = processor.process(value)
 			results.append(result)
 			
-			if case .success(let processedValue) = result.summaryResult.category {
+			if case .success(let processedValue) = result.summary.outcome {
 				value = processedValue
 			}
 		}
