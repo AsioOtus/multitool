@@ -23,7 +23,7 @@ public enum ProcessingResult <Value, Failure> {
 	}
 }
 
-extension ProcessingResult where Failure: Error {
+public extension ProcessingResult where Failure: Error {
 	func value () throws -> Value {
 		switch summary.outcome {
 		case .success(let value):
