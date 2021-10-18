@@ -3,10 +3,16 @@ import Foundation
 public struct JSONDataStringConverter: OptionalDataStringConverter {
 	public static let `default` = Self()
     
+	private let options: JSONSerialization.WritingOptions
+	
+	init (options: JSONSerialization.WritingOptions = [.prettyPrinted]) {
+		self.options = options
+	}
+	
 	public func convert (_ data: Data) -> String? {
         guard
             let object = try? JSONSerialization.jsonObject(with: data, options: []),
-            let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+            let data = try? JSONSerialization.data(withJSONObject: object, options: options),
             let string = String(data: data, encoding: .utf8)
         else { return nil }
         

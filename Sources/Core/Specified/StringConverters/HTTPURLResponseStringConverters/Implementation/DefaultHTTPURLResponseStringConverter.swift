@@ -17,7 +17,7 @@ public struct DefaultHTTPURLResponseStringConverter: HTTPURLResponseStringConver
 	public func convert (_ httpUrlResponse: HTTPURLResponse, body: Data?) -> String {
         var components = [String]()
         
-        let firstLine = ShortHTTPURLResponseStringConverter().convert(httpUrlResponse, body: body)
+        let firstLine = SingleLineHTTPURLResponseStringConverter().convert(httpUrlResponse, body: body)
         components.append(firstLine)
         
 		components.append("")

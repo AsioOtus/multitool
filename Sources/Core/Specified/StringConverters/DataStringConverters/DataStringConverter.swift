@@ -1,12 +1,11 @@
 import Foundation
 
-public protocol DataStringConverter: OptionalDataStringConverter {
+public protocol DataStringConverter: ThrowableDataStringConverter {
     func convert (_ data: Data) -> String
 }
 
-public extension DataStringConverter {
-    func convert (_ data: Data) -> String? {
-        let string: String = convert(data)
-        return string
-    }
+public extension DataStringConverter {	
+	func tryConvert (_ data: Data) throws -> String {
+		convert(data)
+	}
 }

@@ -17,7 +17,7 @@ public struct DefaultURLRequestStringConverter: URLRequestStringConverter {
 	public func convert (_ urlRequest: URLRequest) -> String {
 		var components = [String]()
 		
-		let firstLine = ShortURLRequestStringConverter().convert(urlRequest)
+		let firstLine = SingleLineURLRequestStringConverter().convert(urlRequest)
 		components.append(firstLine)
 		
 		components.append("")
