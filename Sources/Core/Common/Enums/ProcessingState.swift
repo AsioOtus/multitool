@@ -20,3 +20,25 @@ public enum ProcessingState <Initial, Processing, Completed> {
 		}
 	}
 }
+
+public extension ProcessingState where Initial == Void {
+	init () {
+		self = .initial()
+	}
+	
+	static func initial () -> Self {
+		.initial(Void())
+	}
+}
+
+public extension ProcessingState where Processing == Void {
+	static func processing () -> Self {
+		.processing(Void())
+	}
+}
+
+public extension ProcessingState where Completed == Void {
+	static func completed () -> Self {
+		.completed(Void())
+	}
+}
