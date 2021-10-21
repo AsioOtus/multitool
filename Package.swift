@@ -10,7 +10,6 @@ let package = Package(
 			targets: ["Multitool"]
 		),
 	],
-	dependencies: [],
 	targets: [
 		.target(
 			name: "Multitool",
