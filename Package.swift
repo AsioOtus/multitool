@@ -7,24 +7,40 @@ let package = Package(
 	products: [
 		.library(
 			name: "Multitool",
-			targets: ["Multitool"]),
+			targets: ["Multitool"]
+		),
 	],
 	dependencies: [],
 	targets: [
 		.target(
 			name: "Multitool",
-			path: "Sources/Core"),
+			path: "Sources/Core"
+		),
+		.target(
+			name: "Drafts",
+			path: "Sources/Drafts"
+		),
+		
 		.executableTarget(
 			name: "MultitoolTestground",
-			dependencies: ["Multitool"]),
+			dependencies: ["Multitool"]
+		),
+		.executableTarget(
+			name: "DraftsTestground",
+			dependencies: ["Drafts"]
+		),
+		
 		.testTarget(
 			name: "CoreTests",
-			dependencies: ["Multitool"]),
+			dependencies: ["Multitool"]
+		),
 		.testTarget(
 			name: "DispatchTests",
-			dependencies: ["Multitool"]),
+			dependencies: ["Multitool"]
+		),
 		.testTarget(
 			name: "ValueProcessingTests",
-			dependencies: ["Multitool"]),
+			dependencies: ["Multitool"]
+		),
 	]
 )
