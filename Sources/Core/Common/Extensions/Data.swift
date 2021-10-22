@@ -16,29 +16,6 @@ public extension Data {
 	}
 }
 
-//public extension Data {
-//	func split (blockSize: Int) -> [Data] {
-//		var resultChunks = [Data]()
-//		
-//		var startIndex = 0
-//		var endIndex = blockSize
-//		
-//		while endIndex <= count {
-//			let chunk = Data(self[startIndex..<endIndex])
-//			resultChunks.append(chunk)
-//			
-//			startIndex += blockSize
-//			endIndex += blockSize
-//		}
-//		
-//		if startIndex < count {
-//			resultChunks.append(Data(self[startIndex...]))
-//		}
-//		
-//		return resultChunks
-//	}
-//}
-
 public extension Data {
 	var bin: String {
 		map { String($0, radix: 2).padded(atStartTo: 8, with: "0") }.joined(separator: " ")

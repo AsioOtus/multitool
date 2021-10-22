@@ -9,7 +9,7 @@ public struct Base64DataStringConverter: DataStringConverter {
         self.options = options
     }
     
-	public func convert(_ data: Data) -> String {
+	public func convert (_ data: Data) -> String {
         data.base64EncodedString(options: options)
     }
 }
