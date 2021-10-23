@@ -38,10 +38,10 @@ public struct And <Value, Failure>: ProcessorProtocol {
 		self.failure = failure
 	}
 	
-	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ originalValue: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
-		var value = value
+		var value = originalValue
 		for processor in processors {
 			let result = processor.process(value)
 			results.append(result)
@@ -50,7 +50,7 @@ public struct And <Value, Failure>: ProcessorProtocol {
 			value = processedValue
 		}
 		
-		let failure = failure(value)
+		let failure = failure(originalValue)
 		return .multiple(Result(results, value, failure).eraseToAnyMultipleResult())
 	}
 }

@@ -31,17 +31,22 @@ public struct First <Value, Failure>: ProcessorProtocol {
 		self.failure = failure
 	}
 	
-	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ originalValue: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
+		var value = originalValue
 		for processor in processors {
 			let result = processor.process(value)
 			results.append(result)
 			
-			guard case .failure = result.summary.outcome else { break }
+			if case .success(let processedValue) = result.summary.outcome {
+				value = processedValue
+			} else {
+				break
+			}
 		}
 		
-		let failure = failure(value)
+		let failure = failure(originalValue)
 		return .multiple(Result(results, value, failure).eraseToAnyMultipleResult())
 	}
 }

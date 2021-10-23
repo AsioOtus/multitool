@@ -24,14 +24,14 @@ extension SingleResult {
 
 public struct SingleResult <Value, Failure> {
 	public let outcome: Outcome
-	public let name: String
+	public let type: String
 	public let label: String?
 	
-	public var description: String { "\(name.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
+	public var description: String { "\(type.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
 	
-	public init (_ outcome: Outcome, _ name: String, _ label: String? = nil) {
+	public init (_ outcome: Outcome, _ type: String, _ label: String? = nil) {
 		self.outcome = outcome
-		self.name = name
+		self.type = type
 		self.label = label
 	}
 }

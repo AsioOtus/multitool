@@ -19,10 +19,10 @@ public struct Whatever <Value, Failure>: ProcessorProtocol {
 		self.processors = processors
 	}
 	
-	public func process (_ value: Value) -> ProcessingResult<Value, Failure> {
+	public func process (_ originalValue: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
-		var value = value
+		var value = originalValue
 		for processor in processors {
 			let result = processor.process(value)
 			results.append(result)
