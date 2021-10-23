@@ -27,11 +27,13 @@ public struct SingleResult <Value, Failure> {
 	public let type: String
 	public let label: String?
 	
-	public var description: String { "\(type.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
-	
 	public init (_ outcome: Outcome, _ type: String, _ label: String? = nil) {
 		self.outcome = outcome
 		self.type = type
 		self.label = label
 	}
+}
+
+extension SingleResult: CustomStringConvertible {
+	public var description: String { "\(type.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
 }

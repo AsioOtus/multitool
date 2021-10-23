@@ -1,25 +1,3 @@
-extension Last {
-	public struct Result: MultipleResultProtocol {
-		public let results: [ProcessingResult<Value, Failure>]
-		public let summary: SingleResult<Value, Failure>
-		
-		init (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ failure: Failure?) {
-			self.results = results
-			self.summary = {
-				if let lastSuccessResult = results.last(where: { $0.summary.outcome.isSuccess }) {
-					return .init(lastSuccessResult.summary.outcome, Last.name, lastSuccessResult.summary.label)
-					
-				} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
-					return .init(failure.map{ .failure($0) } ?? lastFailureResult.summary.outcome, Last.name)
-					
-				} else {
-					return .init(.success(value), Last.name)
-				}
-			}()
-		}
-	}
-}
-
 public struct Last <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "last" }
 	
@@ -44,7 +22,17 @@ public struct Last <Value, Failure>: ProcessorProtocol {
 		}
 		
 		let failure = failure(originalValue)
-		return .multiple(Result(results, value, failure).eraseToAnyMultipleResult())
+		return .multiple(.init(results: results, summary: summary(results, value, failure)))
+	}
+	
+	private func summary (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ failure: Failure?) -> SingleResult<Value, Failure> {
+		if let lastSuccessResult = results.last(where: { $0.summary.outcome.isSuccess }) {
+			return .init(lastSuccessResult.summary.outcome, Self.name, lastSuccessResult.summary.label)
+		} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
+			return .init(failure.map{ .failure($0) } ?? lastFailureResult.summary.outcome, Self.name)
+		} else {
+			return .init(.success(value), Self.name)
+		}
 	}
 }
 

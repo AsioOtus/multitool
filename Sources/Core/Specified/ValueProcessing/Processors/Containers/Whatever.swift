@@ -1,15 +1,3 @@
-extension Whatever {
-	public struct Result: MultipleResultProtocol {
-		public let results: [ProcessingResult<Value, Failure>]
-		public let summary: SingleResult<Value, Failure>
-		
-		init (_ results: [ProcessingResult<Value, Failure>], _ value: Value) {
-			self.results = results
-			self.summary = { .init(.success(value), Whatever.name) }()
-		}
-	}
-}
-
 public struct Whatever <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "whatever" }
 	
@@ -32,7 +20,7 @@ public struct Whatever <Value, Failure>: ProcessorProtocol {
 			}
 		}
 		
-		return .multiple(Result(results, value).eraseToAnyMultipleResult())
+		return .multiple(.init(results: results, summary: .init(.success(value), Self.name)))
 	}
 }
 

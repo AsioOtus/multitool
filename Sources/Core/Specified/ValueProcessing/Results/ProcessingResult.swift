@@ -1,6 +1,6 @@
 public enum ProcessingResult <Value, Failure> {
 	case single(SingleResult<Value, Failure>)
-	indirect case multiple(AnyMultipleResult<Value, Failure>)
+	indirect case multiple(MultipleResult<Value, Failure>)
 	
 	public var summary: SingleResult<Value, Failure> {
 		switch self {

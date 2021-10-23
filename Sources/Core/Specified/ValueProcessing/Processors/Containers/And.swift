@@ -1,32 +1,3 @@
-extension And {
-	public struct Result: MultipleResultProtocol {
-		public let results: [ProcessingResult<Value, Failure>]
-		public let summary: SingleResult<Value, Failure>
-		
-		init (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ failure: Failure?) {
-			self.results = results
-			
-			self.summary = {
-				if let failedResult = results.first(where: { !$0.summary.outcome.isSuccess }) {
-					return
-						.init(
-							failure.map{ .failure($0) } ?? failedResult.summary.outcome,
-							And.name,
-							failedResult.summary.label
-						)
-					
-				} else {
-					return
-						.init(
-							.success(value),
-							And.name
-						)
-				}
-			}()
-		}
-	}
-}
-
 public struct And <Value, Failure>: ProcessorProtocol {
 	public static var name: String { "and" }
 	
@@ -51,7 +22,20 @@ public struct And <Value, Failure>: ProcessorProtocol {
 		}
 		
 		let failure = failure(originalValue)
-		return .multiple(Result(results, value, failure).eraseToAnyMultipleResult())
+		return .multiple(.init(results: results, summary: summary(results, value, failure)))
+	}
+	
+	private func summary (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ failure: Failure?) -> SingleResult<Value, Failure> {
+		if let failedResult = results.first(where: { !$0.summary.outcome.isSuccess }) {
+			return
+				.init(
+					failure.map{ .failure($0) } ?? failedResult.summary.outcome,
+					Self.name,
+					failedResult.summary.label
+				)
+		} else {
+			return .init(.success(value), Self.name)
+		}
 	}
 }
 
