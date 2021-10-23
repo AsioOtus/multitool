@@ -18,7 +18,7 @@ extension URLResponseStringConverters {
 		public func convert (_ urlResponse: URLResponse, body: Data?) -> String {
 			var components = [String]()
 			
-			let firstLine = SingleLine().convert(urlResponse, body: body)
+			let firstLine = ShortSingleLine().convert(urlResponse, body: body)
 			components.append(firstLine)
 			
 			components.append("")

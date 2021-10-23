@@ -18,7 +18,7 @@ extension URLRequestStringConverters {
 		public func convert (_ urlRequest: URLRequest) -> String {
 			var components = [String]()
 			
-			let firstLine = SingleLine().convert(urlRequest)
+			let firstLine = ShortSingleLine().convert(urlRequest)
 			components.append(firstLine)
 			
 			components.append("")
