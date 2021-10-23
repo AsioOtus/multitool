@@ -53,7 +53,7 @@ public extension AnyProcessor {
 		Last(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func last (failure: @escaping (Value) -> Failure? = { _ in nil }, @ArrayBuilder _ processors: () -> ([Self])) -> Self {
+	static func last (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		Last(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }

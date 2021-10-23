@@ -54,7 +54,7 @@ public extension AnyProcessor {
 		Every(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func every (failure: @escaping (Value) -> Failure? = { _ in nil }, @ArrayBuilder _ processors: () -> ([Self])) -> Self {
+	static func every (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		Every(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }

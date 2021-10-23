@@ -41,7 +41,7 @@ public extension AnyProcessor {
 		Whatever(processors).eraseToAnyProcessor()
 	}
 	
-	static func whatever (@ArrayBuilder _ processors: () -> ([Self])) -> Self {
+	static func whatever (@ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		Whatever(processors()).eraseToAnyProcessor()
 	}
 }

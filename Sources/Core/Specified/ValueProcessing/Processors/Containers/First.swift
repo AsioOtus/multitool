@@ -51,7 +51,7 @@ public extension AnyProcessor {
 		First(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func first (failure: @escaping (Value) -> Failure? = { _ in nil }, @ArrayBuilder _ processors: () -> ([Self])) -> Self {
+	static func first (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		First(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }

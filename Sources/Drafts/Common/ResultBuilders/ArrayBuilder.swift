@@ -1,7 +1,7 @@
 @resultBuilder
 public struct ArrayBuilder {
 	public static func buildBlock <Component> (_ components: Component...) -> [Component] {
-		return Array(components)
+		Array(components)
 	}
 	
 	public static func buildOptional <Component> (_ components: [Component]?) -> [Component] {

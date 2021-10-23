@@ -60,7 +60,7 @@ public extension AnyProcessor {
 		And(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func and (failure: @escaping (Value) -> Failure? = { _ in nil }, @ArrayBuilder _ processors: () -> ([Self])) -> Self {
+	static func and (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		And(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }
