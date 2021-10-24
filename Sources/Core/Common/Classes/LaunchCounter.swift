@@ -15,7 +15,7 @@ public final class LaunchCounter {
 	public var isFirst: Bool { count == 1 }
 	
 	public init (_ label: String) {
-		assert(!label.isEmpty, "LaunchCounter – key can not be empty")
+		assert(!label.isEmpty, "LaunchCounter – label can not be empty")
 		
 		self.label = label
 	}
