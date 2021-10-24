@@ -9,6 +9,10 @@ public struct Every <Value, Failure>: ProcessorProtocol {
 		self.failure = failure
 	}
 	
+	public init (failure: Failure?, _ processors: [AnyProcessor<Value, Failure>]) {
+		self.init(failure: { _ in failure }, processors)
+	}
+	
 	public func process (_ originalValue: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
@@ -42,7 +46,15 @@ public extension AnyProcessor {
 		Every(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
+	static func every (failure: Failure?, _ processors: [Self]) -> Self {
+		Every(failure: failure, processors).eraseToAnyProcessor()
+	}
+	
 	static func every (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		Every(failure: failure, processors()).eraseToAnyProcessor()
+	}
+	
+	static func every (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		Every(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }

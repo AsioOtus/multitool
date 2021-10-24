@@ -27,6 +27,8 @@ public struct SingleResult <Value, Failure> {
 	public let type: String
 	public let label: String?
 	
+	public var isSuccess: Bool { outcome.isSuccess }
+	
 	public init (_ outcome: Outcome, _ type: String, _ label: String? = nil) {
 		self.outcome = outcome
 		self.type = type
@@ -36,4 +38,16 @@ public struct SingleResult <Value, Failure> {
 
 extension SingleResult: CustomStringConvertible {
 	public var description: String { "\(type.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
+}
+
+public extension SingleResult where Failure: Error {
+	func value () throws -> Value {
+		switch outcome {
+		case .success(let value):
+			return value
+			
+		case .failure(let error):
+			throw error
+		}
+	}
 }

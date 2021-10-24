@@ -17,3 +17,9 @@ public extension ProcessorProtocol {
 		.init(self)
 	}
 }
+
+public extension ProcessorProtocol where Value == Void {
+	func process () -> ProcessingResult<Value, Failure> {
+		process(())
+	}
+}

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Multitool
+@testable import ValueProcessing
 
 class AndTests: XCTestCase {
 	func testEmpty () {

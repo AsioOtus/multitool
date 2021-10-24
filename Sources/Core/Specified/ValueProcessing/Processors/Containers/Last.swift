@@ -9,6 +9,10 @@ public struct Last <Value, Failure>: ProcessorProtocol {
 		self.failure = failure
 	}
 	
+	public init (failure: Failure?, _ processors: [AnyProcessor<Value, Failure>]) {
+		self.init(failure: { _ in failure }, processors)
+	}
+	
 	public func process (_ originalValue: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
@@ -41,7 +45,15 @@ public extension AnyProcessor {
 		Last(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
+	static func last (failure: Failure?, _ processors: [Self]) -> Self {
+		Last(failure: failure, processors).eraseToAnyProcessor()
+	}
+	
 	static func last (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		Last(failure: failure, processors()).eraseToAnyProcessor()
+	}
+	
+	static func last (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		Last(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }

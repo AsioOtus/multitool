@@ -9,6 +9,10 @@ public struct First <Value, Failure>: ProcessorProtocol {
 		self.failure = failure
 	}
 	
+	public init (failure: Failure?, _ processors: [AnyProcessor<Value, Failure>]) {
+		self.init(failure: { _ in failure }, processors)
+	}
+	
 	public func process (_ originalValue: Value) -> ProcessingResult<Value, Failure> {
 		var results = [ProcessingResult<Value, Failure>]()
 		
@@ -46,7 +50,15 @@ public extension AnyProcessor {
 		First(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
+	static func first (failure: Failure?, _ processors: [Self]) -> Self {
+		First(failure: failure, processors).eraseToAnyProcessor()
+	}
+	
 	static func first (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		First(failure: failure, processors()).eraseToAnyProcessor()
+	}
+	
+	static func first (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
 		First(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }

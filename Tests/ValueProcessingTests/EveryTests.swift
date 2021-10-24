@@ -1,5 +1,5 @@
 import XCTest
-@testable import Multitool
+@testable import ValueProcessing
 
 class EveryTests: XCTestCase {
 	func testEmpty () {
@@ -13,7 +13,7 @@ class EveryTests: XCTestCase {
 	func testStandard () {
 		let validation = AnyProcessor<String, String?>
 			.every([
-				.process(failure: nil) { $0 + "123" }
+				.process { $0 + "123" }
 			])
 		
 		let validationResult = validation.process("123")
