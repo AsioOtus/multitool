@@ -1,4 +1,4 @@
-public class DispatchAction {
+public class DispatchOnce {
 	private let dispatchResetableFirst = DispatchResetableFirst()
 	
 	private let action: () -> Void
