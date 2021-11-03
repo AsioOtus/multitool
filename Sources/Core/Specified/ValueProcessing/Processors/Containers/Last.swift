@@ -21,8 +21,9 @@ public struct Last <Value, Failure>: ProcessorProtocol {
 			let result = processor.process(value)
 			results.append(result)
 			
-			guard case .success(let processedValue) = result.summary.outcome else { continue }
-			value = processedValue
+			if case .success(let processedValue) = result.summary.outcome {
+				value = processedValue
+			}
 		}
 		
 		let failure = failure(originalValue)

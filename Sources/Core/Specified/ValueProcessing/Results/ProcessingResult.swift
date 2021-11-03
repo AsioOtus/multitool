@@ -22,3 +22,14 @@ public enum ProcessingResult <Value, Failure> {
 		}
 	}
 }
+
+extension ProcessingResult {
+	var failureResults: CompactResult<Failure>? {
+		switch self {
+		case .single(let singleResult):
+			return singleResult.failureResult
+		case .multiple(let multipleResult):
+			return multipleResult.failureResults
+		}
+	}
+}

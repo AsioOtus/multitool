@@ -1,5 +1,5 @@
-public struct Whatever <Value, Failure>: ProcessorProtocol {
-	public static var name: String { "whatever" }
+public struct Untracked <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "untracked" }
 	
 	public let processors: [AnyProcessor<Value, Failure>]
 	
@@ -14,10 +14,6 @@ public struct Whatever <Value, Failure>: ProcessorProtocol {
 		for processor in processors {
 			let result = processor.process(value)
 			results.append(result)
-			
-			if case .success(let processedValue) = result.summary.outcome {
-				value = processedValue
-			}
 		}
 		
 		return .multiple(.init(results: results, summary: .init(.success(value), Self.name)))
@@ -25,11 +21,11 @@ public struct Whatever <Value, Failure>: ProcessorProtocol {
 }
 
 public extension AnyProcessor {
-	static func whatever (_ processors: [Self]) -> Self {
-		Whatever(processors).eraseToAnyProcessor()
+	static func untracked (_ processors: [Self]) -> Self {
+		Untracked(processors).eraseToAnyProcessor()
 	}
 	
-	static func whatever (@ProcessorBuilder _ processors: () -> ([Self])) -> Self {
-		Whatever(processors()).eraseToAnyProcessor()
+	static func untracked (@ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		Untracked(processors()).eraseToAnyProcessor()
 	}
 }

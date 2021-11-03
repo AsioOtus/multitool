@@ -17,3 +17,9 @@ extension MultipleResult: CustomStringConvertible {
 		return "\(summary.description) {\(resultsDescription.isEmpty ? " " : "\n\(resultsDescription)\n")}"
 	}
 }
+
+extension MultipleResult {
+	var failureResults: CompactResult<Failure>? {
+		.init(node: .multiple(results.map{ $0.failureResults }.compactMap{ $0 }, summary: summary.failureResult?.node.outcome), type: summary.type, label: summary.label)
+	}
+}

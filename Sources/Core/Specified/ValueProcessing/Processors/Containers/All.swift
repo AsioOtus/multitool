@@ -1,5 +1,5 @@
-public struct First <Value, Failure>: ProcessorProtocol {
-	public static var name: String { "first" }
+public struct All <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "all" }
 	
 	public let processors: [AnyProcessor<Value, Failure>]
 	public let failure: (Value) -> Failure?
@@ -23,8 +23,6 @@ public struct First <Value, Failure>: ProcessorProtocol {
 			
 			if case .success(let processedValue) = result.summary.outcome {
 				value = processedValue
-			} else {
-				break
 			}
 		}
 		
@@ -33,12 +31,8 @@ public struct First <Value, Failure>: ProcessorProtocol {
 	}
 	
 	private func summary (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ failure: Failure?) -> SingleResult<Value, Failure> {
-		if let firstSuccessResult = results.first(where: { $0.summary.outcome.isSuccess }) {
-			return .init(firstSuccessResult.summary.outcome, Self.name, firstSuccessResult.summary.label)
-			
-		} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
-			return .init(failure.map{ .failure($0) } ?? lastFailureResult.summary.outcome, Self.name)
-			
+		if let firstSuccessResult = results.last(where: { $0.summary.outcome.isSuccess }) {
+			return .init(firstSuccessResult.summary.outcome, Self.name)
 		} else {
 			return .init(.success(value), Self.name)
 		}
@@ -46,19 +40,20 @@ public struct First <Value, Failure>: ProcessorProtocol {
 }
 
 public extension AnyProcessor {
-	static func first (failure: @escaping (Value) -> Failure? = { _ in nil }, _ processors: [Self]) -> Self {
-		First(failure: failure, processors).eraseToAnyProcessor()
+	static func all (failure: @escaping (Value) -> Failure? = { _ in nil }, _ processors: [Self]) -> Self {
+		All(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func first (failure: Failure?, _ processors: [Self]) -> Self {
-		First(failure: failure, processors).eraseToAnyProcessor()
+	static func all (failure: Failure?, _ processors: [Self]) -> Self {
+		All(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func first (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
-		First(failure: failure, processors()).eraseToAnyProcessor()
+	static func all (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		All(failure: failure, processors()).eraseToAnyProcessor()
 	}
 	
-	static func first (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
-		First(failure: failure, processors()).eraseToAnyProcessor()
+	static func all (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		All(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }
+

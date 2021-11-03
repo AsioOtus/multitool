@@ -1,5 +1,5 @@
-public struct Every <Value, Failure>: ProcessorProtocol {
-	public static var name: String { "every" }
+public struct Or <Value, Failure>: ProcessorProtocol {
+	public static var name: String { "or" }
 	
 	public let processors: [AnyProcessor<Value, Failure>]
 	public let failure: (Value) -> Failure?
@@ -23,6 +23,9 @@ public struct Every <Value, Failure>: ProcessorProtocol {
 			
 			if case .success(let processedValue) = result.summary.outcome {
 				value = processedValue
+				break
+			} else {
+				continue
 			}
 		}
 		
@@ -31,10 +34,12 @@ public struct Every <Value, Failure>: ProcessorProtocol {
 	}
 	
 	private func summary (_ results: [ProcessingResult<Value, Failure>], _ value: Value, _ failure: Failure?) -> SingleResult<Value, Failure> {
-		if let firstSuccessResult = results.last(where: { $0.summary.outcome.isSuccess }) {
-			return .init(firstSuccessResult.summary.outcome, Self.name)
+		if let firstSuccessResult = results.first(where: { $0.summary.outcome.isSuccess }) {
+			return .init(firstSuccessResult.summary.outcome, Self.name, firstSuccessResult.summary.label)
+			
 		} else if let lastFailureResult = results.last(where: { !$0.summary.outcome.isSuccess }) {
 			return .init(failure.map{ .failure($0) } ?? lastFailureResult.summary.outcome, Self.name)
+			
 		} else {
 			return .init(.success(value), Self.name)
 		}
@@ -42,20 +47,19 @@ public struct Every <Value, Failure>: ProcessorProtocol {
 }
 
 public extension AnyProcessor {
-	static func every (failure: @escaping (Value) -> Failure? = { _ in nil }, _ processors: [Self]) -> Self {
-		Every(failure: failure, processors).eraseToAnyProcessor()
+	static func or (failure: @escaping (Value) -> Failure? = { _ in nil }, _ processors: [Self]) -> Self {
+		Or(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func every (failure: Failure?, _ processors: [Self]) -> Self {
-		Every(failure: failure, processors).eraseToAnyProcessor()
+	static func or (failure: Failure?, _ processors: [Self]) -> Self {
+		Or(failure: failure, processors).eraseToAnyProcessor()
 	}
 	
-	static func every (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
-		Every(failure: failure, processors()).eraseToAnyProcessor()
+	static func or (failure: @escaping (Value) -> Failure? = { _ in nil }, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		Or(failure: failure, processors()).eraseToAnyProcessor()
 	}
 	
-	static func every (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
-		Every(failure: failure, processors()).eraseToAnyProcessor()
+	static func or (failure: Failure?, @ProcessorBuilder _ processors: () -> ([Self])) -> Self {
+		Or(failure: failure, processors()).eraseToAnyProcessor()
 	}
 }
-

@@ -40,6 +40,17 @@ extension SingleResult: CustomStringConvertible {
 	public var description: String { "\(type.uppercased())\(label.map{ $0.isEmpty ? "" : " – \($0)" } ?? ""): \(outcome.description)" }
 }
 
+public extension SingleResult {
+	var failureResult: CompactResult<Failure>? {
+		switch outcome {
+		case .success(_):
+			return nil
+		case .failure(let failure):
+			return .init(node: .single(failure), type: type, label: label)
+		}
+	}
+}
+
 public extension SingleResult where Failure: Error {
 	func value () throws -> Value {
 		switch outcome {
