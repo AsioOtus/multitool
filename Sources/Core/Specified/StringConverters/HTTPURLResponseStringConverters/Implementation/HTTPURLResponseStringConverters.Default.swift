@@ -15,7 +15,7 @@ extension HTTPURLResponseStringConverters {
 			self.dictionaryStringConverter = dictionaryStringConverter
 		}
 		
-		public func convert (_ httpUrlResponse: HTTPURLResponse, body: Data?) -> String {
+		public func convert (_ httpUrlResponse: HTTPURLResponse, body: Data? = nil) -> String {
 			var components = [String]()
 			
 			let firstLine = ShortSingleLine().convert(httpUrlResponse, body: body)
