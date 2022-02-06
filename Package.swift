@@ -7,35 +7,14 @@ let package = Package(
 	products: [
 		.library(
 			name: "Multitool",
-			targets: ["Multitool", "MultitoolStringConverters"]
-		),
-		.library(
-			name: "MultitoolDispatch",
-			targets: ["MultitoolDispatch"]
-		),
-		.library(
-			name: "MultitoolValueProcessing",
-			targets: ["MultitoolValueProcessing"]
-		),
+			targets: ["Multitool"]
+		)
 	],
 	targets: [
 		.target(
 			name: "Multitool",
-			path: "Sources/Core/Common"
+			path: "Sources/Core"
 		),
-		.target(
-			name: "MultitoolDispatch",
-			path: "Sources/Core/Specified/Dispatch"
-		),
-		.target(
-			name: "MultitoolStringConverters",
-			path: "Sources/Core/Specified/StringConverters"
-		),
-		.target(
-			name: "MultitoolValueProcessing",
-			path: "Sources/Core/Specified/ValueProcessing"
-		),
-		
 		.target(
 			name: "Drafts",
 			path: "Sources/Drafts"
@@ -53,14 +32,6 @@ let package = Package(
 		.testTarget(
 			name: "CoreTests",
 			dependencies: ["Multitool"]
-		),
-		.testTarget(
-			name: "DispatchTests",
-			dependencies: ["MultitoolDispatch"]
-		),
-		.testTarget(
-			name: "ValueProcessingTests",
-			dependencies: ["MultitoolValueProcessing"]
-		),
+		)
 	]
 )
