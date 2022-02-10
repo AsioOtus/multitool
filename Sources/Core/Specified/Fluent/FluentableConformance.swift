@@ -1,5 +1,7 @@
 import Foundation
 
+extension Optional: Fluentable { }
+
 extension Array:      Fluentable { }
 extension Dictionary: Fluentable { }
 extension Set:        Fluentable { }
@@ -25,7 +27,7 @@ extension CGVector: Fluentable { }
 
 #if os(iOS) || os(tvOS)
 import UIKit.UIGeometry
-extension UIEdgeInsets: Customizable { }
-extension UIOffset:     Customizable { }
-extension UIRectEdge:   Customizable { }
+extension UIEdgeInsets: Fluentable { }
+extension UIOffset:     Fluentable { }
+extension UIRectEdge:   Fluentable { }
 #endif
