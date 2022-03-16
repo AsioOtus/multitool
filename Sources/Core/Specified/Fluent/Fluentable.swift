@@ -2,19 +2,19 @@ public protocol Fluentable { }
 
 public extension Fluentable {
     @discardableResult
-	func `do` (_ block: (Self) throws -> Void) rethrows -> Self {
+	func use (_ block: (Self) throws -> Void) rethrows -> Self {
 		try block(self)
         return self
 	}
     
     @discardableResult
-    func `do` (_ block: () throws -> Void) rethrows -> Self {
+    func use (_ block: () throws -> Void) rethrows -> Self {
         try block()
         return self
     }
 	
     @discardableResult
-	func use (_ block: (inout Self) throws -> Void) rethrows -> Self {
+	func do (_ block: (inout Self) throws -> Void) rethrows -> Self {
 		var selfCopy = self
 		try block(&selfCopy)
         return self
