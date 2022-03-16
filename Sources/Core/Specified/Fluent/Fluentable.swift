@@ -47,20 +47,3 @@ public extension Fluentable where Self: AnyObject {
 		return self
 	}
 }
-
-public extension Fluentable {
-    func print(_ item: Any, separator: String = " ", terminator: String = "\n") -> Self {
-        Swift.print(item, separator: separator, terminator: terminator)
-        return self
-    }
-    
-    func print (prefix: String) -> Self {
-        Swift.print(prefix, self)
-        return self
-    }
-    
-    func print () -> Self {
-        Swift.print(self)
-        return self
-    }
-}
