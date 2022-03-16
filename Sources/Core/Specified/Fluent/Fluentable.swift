@@ -14,7 +14,7 @@ public extension Fluentable {
     }
 	
     @discardableResult
-	func do (_ block: (inout Self) throws -> Void) rethrows -> Self {
+	func `do` (_ block: (inout Self) throws -> Void) rethrows -> Self {
 		var selfCopy = self
 		try block(&selfCopy)
         return self
