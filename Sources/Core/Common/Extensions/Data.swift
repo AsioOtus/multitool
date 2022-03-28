@@ -3,15 +3,12 @@ import Foundation
 public extension Data {
 	init? (hex: String) {
 		guard !hex.isHex else { return nil }
-				
-		let bytesStrings = hex.divide(fromEndBy: 2)
-		var bytes = [UInt8]()
-		
-		for byteString in bytesStrings {
-			guard let byte = UInt8(byteString, radix: 16) else { return nil }
-			bytes.append(byte)
-		}
-		
+        
+        let bytes = hex
+            .divide(fromEndBy: 2)
+            .map { UInt8($0, radix: 16) }
+            .compactMap{ $0 }
+        
 		self.init(bytes)
 	}
 }

@@ -13,6 +13,7 @@ extension Bool:       Fluentable { }
 
 extension NSObject: Fluentable { }
 extension Date:     Fluentable { }
+extension Data:     Fluentable { }
 
 
 

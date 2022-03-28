@@ -1,23 +1,23 @@
 public extension Optional {
 	@discardableResult
-	func `if` (_ some: (Wrapped) -> Void, `else`: () -> Void = { }) -> Self {
-		if let value = self { some(value) }
+	func `if` (_ action: (Wrapped) -> Void, `else`: () -> Void = { }) -> Self {
+		if let value = self { action(value) }
         else { `else`() }
 		
 		return self
 	}
     
     @discardableResult
-    func `if` (_ some: () -> Void, `else`: () -> Void = { }) -> Self {
-        if self != nil { some() }
+    func `if` (_ action: () -> Void, `else`: () -> Void = { }) -> Self {
+        if self != nil { action() }
         else { `else`() }
         
         return self
     }
 	
 	@discardableResult
-	func `else` (_ block: () -> Void) -> Self {
-		if self == nil { block() }
+	func `else` (_ action: () -> Void) -> Self {
+		if self == nil { action() }
 
 		return self
 	}
