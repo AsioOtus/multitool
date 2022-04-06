@@ -33,11 +33,11 @@ public extension Data {
 	
 	
 	var plainBin: String {
-		map { String($0, radix: 2) }.joined()
+		map { String($0, radix: 2).padded(atStartTo: 3, with: "0") }.joined()
 	}
 	
 	var plainOct: String {
-		map { String($0, radix: 8) }.joined()
+		map { String($0, radix: 8).padded(atStartTo: 3, with: "0") }.joined()
 	}
 	
 	var plainDec: String {
@@ -45,7 +45,7 @@ public extension Data {
 	}
 	
 	var plainHex: String {
-		map { String($0, radix: 16) }.joined()
+		map { String($0, radix: 16).padded(atStartTo: 3, with: "0") }.joined()
 	}
 	
 	
