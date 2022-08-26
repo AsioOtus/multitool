@@ -1,7 +1,19 @@
-import Multitool
+import Combine
+import Foundation
 
-let someBoolVariableWithVeryLongName = true
 
-func a (_ b: (() -> Void) -> () -> Void) -> Void { b {  }() } //(() -> Void) -> () { { $0() } }
 
-a { (b: @escaping () -> Void) in { b() } }
+if #available(macOS 10.15, *) {
+	var s = Set<AnyCancellable>()
+
+	let a = PassthroughSubject<String, Never>()
+
+	let b = a.eraseToAnyPublisher()
+
+	b.sink { print($0) }
+		.store(in: &s)
+
+	a.send("qeqweqew")
+
+	RunLoop.main.run()
+}

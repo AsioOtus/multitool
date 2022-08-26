@@ -15,37 +15,37 @@ public extension Data {
 
 public extension Data {
 	var bin: String {
-		map { String($0, radix: 2).padded(atStartTo: 8, with: "0") }.joined(separator: " ")
+		map { .init($0, radix: 2).padded(atStartTo: 8, with: "0") }.joined(separator: " ")
 	}
 	
 	var oct: String {
-		map { String($0, radix: 8).padded(atStartTo: 3, with: "0") }.joined(separator: " ")
+		map { .init($0, radix: 8).padded(atStartTo: 3, with: "0") }.joined(separator: " ")
 	}
 	
 	var dec: String {
-		map { String($0, radix: 10) }.joined(separator: " ")
+		map { .init($0, radix: 10) }.joined(separator: " ")
 	}
 	
 	var hex: String {
-		map { String($0, radix: 16).padded(atStartTo: 2, with: "0") }.joined(separator: " ")
+		map { .init($0, radix: 16).padded(atStartTo: 2, with: "0") }.joined(separator: " ")
 	}
 	
 	
 	
 	var plainBin: String {
-		map { String($0, radix: 2).padded(atStartTo: 3, with: "0") }.joined()
+		map { .init($0, radix: 2).padded(atStartTo: 8, with: "0") }.joined()
 	}
 	
 	var plainOct: String {
-		map { String($0, radix: 8).padded(atStartTo: 3, with: "0") }.joined()
+		map { .init($0, radix: 8).padded(atStartTo: 3, with: "0") }.joined()
 	}
 	
 	var plainDec: String {
-		map { String($0, radix: 10) }.joined()
+		map { .init($0, radix: 10) }.joined()
 	}
 	
 	var plainHex: String {
-		map { String($0, radix: 16).padded(atStartTo: 3, with: "0") }.joined()
+		map { .init($0, radix: 16).padded(atStartTo: 2, with: "0") }.joined()
 	}
 	
 	
