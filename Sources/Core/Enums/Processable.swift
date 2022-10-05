@@ -15,49 +15,71 @@ public extension Processable {
 		}
 	}
 
-	var initialValue: Initial?       { if case .initial(let value) = self { return value } else { return nil } }
+	var initialValue: Initial?       { if case .initial(let value)    = self { return value } else { return nil } }
 	var processingValue: Processing? { if case .processing(let value) = self { return value } else { return nil } }
-	var completedValue: Completed?   { if case .completed(let value) = self { return value } else { return nil } }
-	var failedValue: Failed?         { if case .failed(let value) = self { return value } else { return nil } }
+	var completedValue: Completed?   { if case .completed(let value)  = self { return value } else { return nil } }
+	var failedValue: Failed?         { if case .failed(let value)     = self { return value } else { return nil } }
 
-	var isInitial: Bool    { if case .initial = self { return true } else { return false } }
+	var isInitial: Bool    { if case .initial    = self { return true } else { return false } }
 	var isProcessing: Bool { if case .processing = self { return true } else { return false } }
-	var isCompleted: Bool  { if case .completed = self { return true } else { return false } }
-	var isFailed: Bool     { if case .failed = self { return true } else { return false } }
+	var isCompleted: Bool  { if case .completed  = self { return true } else { return false } }
+	var isFailed: Bool     { if case .failed     = self { return true } else { return false } }
 
-	func mapInitial <NewInitial> (_ mapping: (Initial) -> NewInitial) -> Processable<NewInitial, Processing, Completed, Failed> {
+	func mapInitial <NewInitial> (_ mapping: (Initial) -> NewInitial)
+    -> Processable<NewInitial, Processing, Completed, Failed>
+    {
 		switch self {
-		case .initial(let v): return .initial(mapping(v))
+		case .initial(let v):    return .initial(mapping(v))
 		case .processing(let v): return .processing(v)
-		case .completed(let v): return .completed(v)
-		case .failed(let e): return .failed(e)
+		case .completed(let v):  return .completed(v)
+		case .failed(let e):     return .failed(e)
 		}
 	}
 
-	func mapProcessing <NewProcessing> (_ mapping: (Processing) -> NewProcessing) -> Processable<Initial, NewProcessing, Completed, Failed> {
+	func mapProcessing <NewProcessing> (_ mapping: (Processing) -> NewProcessing)
+    -> Processable<Initial, NewProcessing, Completed, Failed>
+    {
 		switch self {
-		case .initial(let v): return .initial(v)
+		case .initial(let v):    return .initial(v)
 		case .processing(let v): return .processing(mapping(v))
-		case .completed(let v): return .completed(v)
-		case .failed(let e): return .failed(e)
+		case .completed(let v):  return .completed(v)
+		case .failed(let e):     return .failed(e)
 		}
 	}
 
-	func mapCompleted <NewCompleted> (_ mapping: (Completed) -> NewCompleted) -> Processable<Initial, Processing, NewCompleted, Failed> {
+	func mapCompleted <NewCompleted> (_ mapping: (Completed) -> NewCompleted)
+    -> Processable<Initial, Processing, NewCompleted, Failed>
+    {
 		switch self {
-		case .initial(let v): return .initial(v)
+		case .initial(let v):    return .initial(v)
 		case .processing(let v): return .processing(v)
-		case .completed(let v): return .completed(mapping(v))
-		case .failed(let e): return .failed(e)
+		case .completed(let v):  return .completed(mapping(v))
+		case .failed(let e):     return .failed(e)
 		}
 	}
 
-	func mapFailed <NewFailed: Error> (_ mapping: (Failed) -> NewFailed) -> Processable<Initial, Processing, Completed, NewFailed> {
+	func mapFailed <NewFailed: Error> (_ mapping: (Failed) -> NewFailed)
+    -> Processable<Initial, Processing, Completed, NewFailed>
+    {
 		switch self {
-		case .initial(let v): return .initial(v)
+		case .initial(let v):    return .initial(v)
 		case .processing(let v): return .processing(v)
-		case .completed(let v): return .completed(v)
-		case .failed(let e): return .failed(mapping(e))
+		case .completed(let v):  return .completed(v)
+		case .failed(let e):     return .failed(mapping(e))
 		}
 	}
+}
+
+public extension Processable where Initial == Void {
+    init () { self = .initial() }
+
+    static func initial () -> Self { .initial(Void()) }
+}
+
+public extension Processable where Processing == Void {
+    static func processing () -> Self { .processing(Void()) }
+}
+
+public extension Processable where Completed == Void {
+    static func completed () -> Self { .completed(Void()) }
 }
