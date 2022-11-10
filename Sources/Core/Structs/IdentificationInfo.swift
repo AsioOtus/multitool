@@ -20,7 +20,7 @@ public struct IdentificationInfo: Codable, CustomStringConvertible {
 		"\(module.map{ "\($0)." } ?? "")\(type)"
 	}
 	
-	init (module: String? = nil, type: String, file: String, line: Int, label: String? = nil, extra: String? = nil) {
+	public init (module: String? = nil, type: String, file: String, line: Int, label: String? = nil, extra: String? = nil) {
 		self.module = module
 		self.type = type
 		self.definition = "\(file):\(line)"

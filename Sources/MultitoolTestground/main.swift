@@ -3,17 +3,16 @@ import Foundation
 
 
 
-if #available(macOS 10.15, *) {
-	var s = Set<AnyCancellable>()
-
-	let a = PassthroughSubject<String, Never>()
-
-	let b = a.eraseToAnyPublisher()
-
-	b.sink { print($0) }
-		.store(in: &s)
-
-	a.send("qeqweqew")
-
-	RunLoop.main.run()
+public extension Source {
+	static let general: Self = "general"
 }
+
+
+
+
+let s: Source = ["3", "4"]
+let s1: Source = "1.2"
+print(s.string)
+print(s1.string)
+
+print(s1.add(s).string)
