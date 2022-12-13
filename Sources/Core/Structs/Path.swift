@@ -1,4 +1,4 @@
-public struct Source {
+public struct Path {
 	public let components: [String]
 	public let separator: String
 	public var string: String { components.joined(separator: separator) }
@@ -21,7 +21,7 @@ public struct Source {
 	}
 }
 
-public extension Source {
+public extension Path {
 	func add (_ another: Self, separator: String? = nil) -> Self {
 		.init(components + another.components, separator: separator ?? self.separator)
 	}
@@ -31,19 +31,19 @@ public extension Source {
 	}
 }
 
-extension Source: ExpressibleByStringLiteral {
+extension Path: ExpressibleByStringLiteral {
 	public init (stringLiteral component: String) {
 		self.init(component)
 	}
 }
 
-extension Source: ExpressibleByArrayLiteral {
+extension Path: ExpressibleByArrayLiteral {
 	public init (arrayLiteral components: Self...) {
 		self.init(components.map(\.string))
 	}
 }
 
-extension Source: RawRepresentable {
+extension Path: RawRepresentable {
 	public var rawValue: String { string }
 
 	public init? (rawValue: String) {
@@ -51,4 +51,4 @@ extension Source: RawRepresentable {
 	}
 }
 
-extension Source: Codable { }
+extension Path: Codable { }
