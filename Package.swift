@@ -7,12 +7,13 @@ let package = Package(
 	products: [
 		.library(
 			name: "Multitool",
-			targets: ["Core"]
+			targets: ["Multitool"]
 		)
 	],
 	targets: [
 		.target(
-			name: "Core"
+			name: "Multitool",
+      path: "Sources/Core"
 		),
 		.target(
 			name: "Drafts"
@@ -20,7 +21,7 @@ let package = Package(
 		
 		.executableTarget(
 			name: "CoreTestground",
-			dependencies: ["Core"]
+			dependencies: ["Multitool"]
 		),
 		.executableTarget(
 			name: "DraftsTestground",
@@ -29,7 +30,7 @@ let package = Package(
 		
 		.testTarget(
 			name: "CoreTests",
-			dependencies: ["Core"]
+			dependencies: ["Multitool"]
 		)
 	]
 )
