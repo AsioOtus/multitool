@@ -7,3 +7,9 @@ public struct KeyValuePair <Key, Value> {
 		self.value = value
 	}
 }
+
+extension KeyValuePair: Equatable where Key: Equatable {
+  public static func == (lhs: KeyValuePair<Key, Value>, rhs: KeyValuePair<Key, Value>) -> Bool {
+    lhs.key == rhs.key
+  }
+}
