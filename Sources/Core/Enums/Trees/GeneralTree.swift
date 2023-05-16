@@ -1,10 +1,10 @@
-public indirect enum Tree <Leaf, Node> {
+public indirect enum GeneralTree <Leaf, Node> {
   case leaf(Leaf)
-  case node(Node, [Tree])
+  case node(Node, [GeneralTree])
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-public extension Tree where Leaf: Identifiable, Node: Identifiable {
+public extension GeneralTree where Leaf: Identifiable, Node: Identifiable {
   var leafIds: [Leaf.ID] {
     switch self {
     case .leaf(let leaf):
@@ -59,7 +59,7 @@ public extension Tree where Leaf: Identifiable, Node: Identifiable {
     }
   }
 
-  func insert (tree: Tree, toNode nodeId: Node.ID) -> Self? {
+  func insert (tree: GeneralTree, toNode nodeId: Node.ID) -> Self? {
     switch tree {
     case .leaf(let leaf):
       guard !isContains(leafId: leaf.id) else { return nil }
@@ -97,12 +97,12 @@ public extension Tree where Leaf: Identifiable, Node: Identifiable {
     }
   }
 
-  func insert (node: Node, trees: [Tree], toNode nodeId: Node.ID) -> Self? {
+  func insert (node: Node, trees: [GeneralTree], toNode nodeId: Node.ID) -> Self? {
     guard !isContains(nodeId: node.id) else { return nil }
     return insert(node, trees, toNode: nodeId)
   }
 
-  private func insert (_ node: Node, _ trees: [Tree], toNode nodeId: Node.ID) -> Self? {
+  private func insert (_ node: Node, _ trees: [GeneralTree], toNode nodeId: Node.ID) -> Self? {
     switch self {
     case .leaf:
       return nil
@@ -123,7 +123,7 @@ public extension Tree where Leaf: Identifiable, Node: Identifiable {
     }
   }
 
-  func update (with tree: Tree) -> Self? {
+  func update (with tree: GeneralTree) -> Self? {
     switch self {
     case .leaf(let leaf): return update(with: leaf)
     case .node(let node, let trees): return update(with: node, and: trees)
@@ -146,7 +146,7 @@ public extension Tree where Leaf: Identifiable, Node: Identifiable {
     }
   }
 
-  func update (with updatedNode: Node, and updatedTrees: [Tree]? = nil) -> Self? {
+  func update (with updatedNode: Node, and updatedTrees: [GeneralTree]? = nil) -> Self? {
     switch self {
     case .leaf:
       return nil
@@ -187,7 +187,7 @@ public extension Tree where Leaf: Identifiable, Node: Identifiable {
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-extension Tree: Identifiable where Leaf: Identifiable, Node: Identifiable, Leaf.ID == Node.ID {
+extension GeneralTree: Identifiable where Leaf: Identifiable, Node: Identifiable, Leaf.ID == Node.ID {
   public typealias ID = Node.ID
 
   public var id: ID {
@@ -199,7 +199,7 @@ extension Tree: Identifiable where Leaf: Identifiable, Node: Identifiable, Leaf.
 }
 
 @available(iOS 13.0, macOS 10.15, *)
-public extension Tree where Leaf: Identifiable, Node: Identifiable, Leaf.ID == Node.ID {
+public extension GeneralTree where Leaf: Identifiable, Node: Identifiable, Leaf.ID == Node.ID {
   var ids: [Leaf.ID] {
     switch self {
     case .leaf(let leaf):
@@ -236,7 +236,7 @@ public extension Tree where Leaf: Identifiable, Node: Identifiable, Leaf.ID == N
     }
   }
 
-  func replace (_ id: ID, with tree: Tree) -> Self? {
+  func replace (_ id: ID, with tree: GeneralTree) -> Self? {
     switch self {
     case .leaf(let leaf):
       return leaf.id == id ? tree : nil
