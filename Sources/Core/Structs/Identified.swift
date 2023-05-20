@@ -1,4 +1,4 @@
-public struct IdentifiableValue <ID: Hashable, Value> {
+public struct Identified <ID: Hashable, Value> {
   public let id: ID
   public let value: Value
 
@@ -8,9 +8,9 @@ public struct IdentifiableValue <ID: Hashable, Value> {
   }
 }
 
-extension IdentifiableValue: Identifiable { }
+extension Identified: Identifiable { }
 
-extension IdentifiableValue: Hashable {
+extension Identified: Hashable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.id == rhs.id
   }
