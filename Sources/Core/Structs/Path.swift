@@ -52,3 +52,5 @@ extension Path: RawRepresentable {
 }
 
 extension Path: Codable { }
+
+extension Path: Equatable { }
