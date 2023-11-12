@@ -138,6 +138,24 @@ public extension Processable {
   }
 }
 
+public extension Processable where Failed == Error {
+  init (catching: () throws -> Completed) {
+    do {
+      self = try .completed(catching())
+    } catch {
+      self = .failed(error)
+    }
+  }
+
+  init (asyncCatching: () async throws -> Completed) async {
+    do {
+      self = try await .completed(asyncCatching())
+    } catch {
+      self = .failed(error)
+    }
+  }
+}
+
 public extension Processable {
   var result: Result<Completed, Failed>? {
     switch self {
@@ -145,6 +163,15 @@ public extension Processable {
     case .processing: nil
     case .completed(let completed): .success(completed)
     case .failed(let failed): .failure(failed)
+    }
+  }
+
+  init (result: Result<Completed, Failed>) {
+    switch result {
+    case .success(let success):
+      self = .completed(success)
+    case .failure(let failure):
+      self = .failed(failure)
     }
   }
 }
