@@ -29,7 +29,7 @@ public extension Processable {
 }
 
 public extension Processable {
-  func mapInitial <NewInitial> (
+  func mapInitialValue <NewInitial> (
     _ mapping: (Initial) -> NewInitial
   ) -> Processable<NewInitial, Processing, Completed, Failed> {
     switch self {
@@ -40,7 +40,7 @@ public extension Processable {
     }
   }
 
-  func mapProcessing <NewProcessing> (
+  func mapProcessingValue <NewProcessing> (
     _ mapping: (Processing) -> NewProcessing
   ) -> Processable<Initial, NewProcessing, Completed, Failed> {
     switch self {
@@ -51,7 +51,7 @@ public extension Processable {
     }
   }
 
-  func mapCompleted <NewCompleted> (
+  func mapCompletedValue <NewCompleted> (
     _ mapping: (Completed) -> NewCompleted
   ) -> Processable<Initial, Processing, NewCompleted, Failed> {
     switch self {
@@ -62,7 +62,7 @@ public extension Processable {
     }
   }
 
-  func mapFailed <NewFailed: Error> (
+  func mapFailedValue <NewFailed: Error> (
     _ mapping: (Failed) -> NewFailed
   ) -> Processable<Initial, Processing, Completed, NewFailed> {
     switch self {
@@ -71,6 +71,30 @@ public extension Processable {
     case .completed(let v):  return .completed(v)
     case .failed(let e):     return .failed(mapping(e))
     }
+  }
+
+  func replaceInitialValue <NewInitial> (
+    with newInitial: NewInitial
+  ) -> Processable<NewInitial, Processing, Completed, Failed> {
+    mapInitialValue { _ in newInitial }
+  }
+
+  func replaceProcessingValue <NewProcessing> (
+    with newProcessing: NewProcessing
+  ) -> Processable<Initial, NewProcessing, Completed, Failed> {
+    mapProcessingValue { _ in newProcessing }
+  }
+
+  func replaceCompletedValue <NewCompleted> (
+    with newCompleted: NewCompleted
+  ) -> Processable<Initial, Processing, NewCompleted, Failed> {
+    mapCompletedValue { _ in newCompleted }
+  }
+
+  func replaceFailedValue <NewFailed: Error> (
+    with newFailed: NewFailed
+  ) -> Processable<Initial, Processing, Completed, NewFailed> {
+    mapFailedValue { _ in newFailed }
   }
 }
 
@@ -118,9 +142,7 @@ public extension Processable {
     case .failed(let e):     return mapping(e)
     }
   }
-}
 
-public extension Processable {
   func replaceInitial (with value: Self) -> Self {
     replaceInitial { _ in value }
   }
