@@ -14,3 +14,7 @@ public extension UUID {
     return .init(uuidString: "\(pad(a, size: 8))-\(pad(b, size: 4))-\(pad(c, size: 4))-\(pad(d, size: 4))-\(pad(e, size: 12))")!
   }
 }
+
+public extension UUID {
+	static let zeros = Self(uuidString: "00000000-0000-0000-0000-000000000000")!
+}

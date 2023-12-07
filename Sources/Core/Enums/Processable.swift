@@ -6,7 +6,7 @@ public enum Processable <Initial, Processing, Completed, Failed: Error> {
 }
 
 public extension Processable {
-  var name: String {
+  var debugName: String {
     switch self {
     case .initial:    return "inital"
     case .processing: return "processing"
