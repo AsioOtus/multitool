@@ -10,6 +10,7 @@ extension Result: Codable where Success: Codable, Failure: Codable {
     do {
       self = .success(try container.decode(Success.self, forKey: .success))
     } catch {
+			guard !container.contains(.success) else { throw error }
       self = .failure(try container.decode(Failure.self, forKey: .failure))
     }
   }
