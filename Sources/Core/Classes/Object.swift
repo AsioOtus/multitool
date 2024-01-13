@@ -1,7 +1,7 @@
 @dynamicMemberLookup
-public final class Unowned<Value: AnyObject> {
-	public unowned var value: Value
-	
+public final class Object<Value> {
+	public var value: Value
+
 	public init (_ value: Value) {
 		self.value = value
 	}
