@@ -1,7 +1,8 @@
 public struct Path {
 	public let components: [String]
 	public let separator: String
-	public var string: String { components.joined(separator: separator) }
+
+	public var divided: [Self] { components.map(Self.init) }
 
 	public init (_ components: [String], separator: String = ".") {
 		self.components = components
@@ -39,15 +40,21 @@ extension Path: ExpressibleByStringLiteral {
 
 extension Path: ExpressibleByArrayLiteral {
 	public init (arrayLiteral components: Self...) {
-		self.init(components.map(\.string))
+		self.init(components.map(\.description))
 	}
 }
 
 extension Path: RawRepresentable {
-	public var rawValue: String { string }
+	public var rawValue: String { description }
 
 	public init? (rawValue: String) {
 		self.init(rawValue)
+	}
+}
+
+extension Path: CustomStringConvertible {
+	public var description: String {
+		components.joined(separator: separator)
 	}
 }
 
