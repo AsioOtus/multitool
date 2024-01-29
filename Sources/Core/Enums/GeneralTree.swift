@@ -9,6 +9,12 @@ public struct GeneralTree <Value> {
 		self.value = value
 		self.nodes = nodes
 	}
+
+	public init (
+		value: Value
+	) {
+		self.init(value: value, nodes: [])
+	}
 }
 
 public extension GeneralTree {
