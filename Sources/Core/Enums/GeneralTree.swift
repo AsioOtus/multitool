@@ -30,3 +30,5 @@ public extension GeneralTree {
 		nodes.map(\.depth).max() ?? 0 + 1
 	}
 }
+
+extension GeneralTree: Codable where Value: Codable { }
