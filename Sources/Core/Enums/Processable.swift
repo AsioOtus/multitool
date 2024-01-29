@@ -1,7 +1,7 @@
-public enum Processable <Initial, Processing, Completed, Failed: Error> {
+public enum Processable <Initial, Processing, Successful, Failed: Error> {
   case initial(Initial)
   case processing(Processing)
-  case completed(Completed)
+  case successful(Successful)
   case failed(Failed)
 }
 
@@ -10,7 +10,7 @@ public extension Processable {
     switch self {
     case .initial:    return "inital"
     case .processing: return "processing"
-    case .completed:  return "completed"
+    case .successful: return "successful"
     case .failed:     return "failed"
     }
   }
@@ -19,81 +19,81 @@ public extension Processable {
 public extension Processable {
   var initialValue: Initial?       { if case .initial(let value)    = self { return value } else { return nil } }
   var processingValue: Processing? { if case .processing(let value) = self { return value } else { return nil } }
-  var completedValue: Completed?   { if case .completed(let value)  = self { return value } else { return nil } }
+  var successfulValue: Successful? { if case .successful(let value)  = self { return value } else { return nil } }
   var failedValue: Failed?         { if case .failed(let value)     = self { return value } else { return nil } }
 
   var isInitial: Bool    { if case .initial    = self { return true } else { return false } }
   var isProcessing: Bool { if case .processing = self { return true } else { return false } }
-  var isCompleted: Bool  { if case .completed  = self { return true } else { return false } }
+  var isSuccessful: Bool { if case .successful  = self { return true } else { return false } }
   var isFailed: Bool     { if case .failed     = self { return true } else { return false } }
 }
 
 public extension Processable {
   func mapInitialValue <NewInitial> (
     _ mapping: (Initial) -> NewInitial
-  ) -> Processable<NewInitial, Processing, Completed, Failed> {
+  ) -> Processable<NewInitial, Processing, Successful, Failed> {
     switch self {
     case .initial(let v):    return .initial(mapping(v))
     case .processing(let v): return .processing(v)
-    case .completed(let v):  return .completed(v)
+    case .successful(let v): return .successful(v)
     case .failed(let e):     return .failed(e)
     }
   }
 
   func mapProcessingValue <NewProcessing> (
     _ mapping: (Processing) -> NewProcessing
-  ) -> Processable<Initial, NewProcessing, Completed, Failed> {
+  ) -> Processable<Initial, NewProcessing, Successful, Failed> {
     switch self {
     case .initial(let v):    return .initial(v)
     case .processing(let v): return .processing(mapping(v))
-    case .completed(let v):  return .completed(v)
+    case .successful(let v): return .successful(v)
     case .failed(let e):     return .failed(e)
     }
   }
 
-  func mapCompletedValue <NewCompleted> (
-    _ mapping: (Completed) -> NewCompleted
-  ) -> Processable<Initial, Processing, NewCompleted, Failed> {
+  func mapSuccessfulValue <NewSuccessful> (
+    _ mapping: (Successful) -> NewSuccessful
+  ) -> Processable<Initial, Processing, NewSuccessful, Failed> {
     switch self {
     case .initial(let v):    return .initial(v)
     case .processing(let v): return .processing(v)
-    case .completed(let v):  return .completed(mapping(v))
+    case .successful(let v): return .successful(mapping(v))
     case .failed(let e):     return .failed(e)
     }
   }
 
   func mapFailedValue <NewFailed: Error> (
     _ mapping: (Failed) -> NewFailed
-  ) -> Processable<Initial, Processing, Completed, NewFailed> {
+  ) -> Processable<Initial, Processing, Successful, NewFailed> {
     switch self {
     case .initial(let v):    return .initial(v)
     case .processing(let v): return .processing(v)
-    case .completed(let v):  return .completed(v)
+    case .successful(let v): return .successful(v)
     case .failed(let e):     return .failed(mapping(e))
     }
   }
 
   func replaceInitialValue <NewInitial> (
     with newInitial: NewInitial
-  ) -> Processable<NewInitial, Processing, Completed, Failed> {
+  ) -> Processable<NewInitial, Processing, Successful, Failed> {
     mapInitialValue { _ in newInitial }
   }
 
   func replaceProcessingValue <NewProcessing> (
     with newProcessing: NewProcessing
-  ) -> Processable<Initial, NewProcessing, Completed, Failed> {
+  ) -> Processable<Initial, NewProcessing, Successful, Failed> {
     mapProcessingValue { _ in newProcessing }
   }
 
-  func replaceCompletedValue <NewCompleted> (
-    with newCompleted: NewCompleted
-  ) -> Processable<Initial, Processing, NewCompleted, Failed> {
-    mapCompletedValue { _ in newCompleted }
+  func replaceSuccessfulValue <NewSuccessful> (
+    with newSuccessful: NewSuccessful
+  ) -> Processable<Initial, Processing, NewSuccessful, Failed> {
+    mapSuccessfulValue { _ in newSuccessful }
   }
 
   func replaceFailedValue <NewFailed: Error> (
     with newFailed: NewFailed
-  ) -> Processable<Initial, Processing, Completed, NewFailed> {
+  ) -> Processable<Initial, Processing, Successful, NewFailed> {
     mapFailedValue { _ in newFailed }
   }
 }
@@ -105,7 +105,7 @@ public extension Processable {
     switch self {
     case .initial(let v):    return mapping(v)
     case .processing(let v): return .processing(v)
-    case .completed(let v):  return .completed(v)
+    case .successful(let v): return .successful(v)
     case .failed(let e):     return .failed(e)
     }
   }
@@ -116,18 +116,18 @@ public extension Processable {
     switch self {
     case .initial(let v):    return .initial(v)
     case .processing(let v): return mapping(v)
-    case .completed(let v):  return .completed(v)
+    case .successful(let v): return .successful(v)
     case .failed(let e):     return .failed(e)
     }
   }
 
-  func replaceCompleted (
-    _ mapping: (Completed) -> Self
+  func replaceSuccessful (
+    _ mapping: (Successful) -> Self
   ) -> Self {
     switch self {
     case .initial(let v):    return .initial(v)
     case .processing(let v): return .processing(v)
-    case .completed(let v):  return mapping(v)
+    case .successful(let v): return mapping(v)
     case .failed(let e):     return .failed(e)
     }
   }
@@ -138,7 +138,7 @@ public extension Processable {
     switch self {
     case .initial(let v):    return .initial(v)
     case .processing(let v): return .processing(v)
-    case .completed(let v):  return .completed(v)
+    case .successful(let v): return .successful(v)
     case .failed(let e):     return mapping(e)
     }
   }
@@ -151,8 +151,8 @@ public extension Processable {
     replaceProcessing { _ in value }
   }
 
-  func replaceCompleted (with value: Self) -> Self {
-    replaceCompleted { _ in value }
+  func replaceSuccessful (with value: Self) -> Self {
+    replaceSuccessful { _ in value }
   }
 
   func replaceFailed (with value: Self) -> Self {
@@ -161,17 +161,17 @@ public extension Processable {
 }
 
 public extension Processable where Failed == Error {
-  init (catching: () throws -> Completed) {
+  init (catching: () throws -> Successful) {
     do {
-      self = try .completed(catching())
+      self = try .successful(catching())
     } catch {
       self = .failed(error)
     }
   }
 
-  init (asyncCatching: () async throws -> Completed) async {
+  init (asyncCatching: () async throws -> Successful) async {
     do {
-      self = try await .completed(asyncCatching())
+      self = try await .successful(asyncCatching())
     } catch {
       self = .failed(error)
     }
@@ -179,19 +179,19 @@ public extension Processable where Failed == Error {
 }
 
 public extension Processable {
-  var result: Result<Completed, Failed>? {
+  var result: Result<Successful, Failed>? {
     switch self {
     case .initial: nil
     case .processing: nil
-    case .completed(let completed): .success(completed)
+    case .successful(let successful): .success(successful)
     case .failed(let failed): .failure(failed)
     }
   }
 
-  init (result: Result<Completed, Failed>) {
+  init (result: Result<Successful, Failed>) {
     switch result {
     case .success(let success):
-      self = .completed(success)
+      self = .successful(success)
     case .failure(let failure):
       self = .failed(failure)
     }
@@ -208,6 +208,6 @@ public extension Processable where Processing == Void {
   static func processing () -> Self { .processing(Void()) }
 }
 
-public extension Processable where Completed == Void {
-  static func completed () -> Self { .completed(Void()) }
+public extension Processable where Successful == Void {
+  static func successful () -> Self { .successful(Void()) }
 }
