@@ -32,3 +32,4 @@ public extension GeneralTree {
 }
 
 extension GeneralTree: Codable where Value: Codable { }
+extension GeneralTree: Hashable where Value: Hashable { }
