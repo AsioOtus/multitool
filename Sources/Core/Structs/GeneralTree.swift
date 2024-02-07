@@ -31,6 +31,16 @@ public extension GeneralTree {
 	}
 }
 
+public extension GeneralTree where Value: Identifiable {
+	mutating func removeNodes (withId id: Value.ID) {
+		nodes.removeAll { $0.value.id == id }
+
+		for index in nodes.indices {
+			nodes[index].removeNodes(withId: id)
+		}
+	}
+}
+
 extension GeneralTree: Codable where Value: Codable { }
 extension GeneralTree: Equatable where Value: Equatable { }
 extension GeneralTree: Hashable where Value: Hashable { }
