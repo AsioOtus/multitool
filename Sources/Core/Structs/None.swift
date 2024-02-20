@@ -1,3 +1,3 @@
-public struct None: Equatable {
+public struct None: Hashable {
   public init () { }
 }
