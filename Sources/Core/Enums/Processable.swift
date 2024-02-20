@@ -1,3 +1,4 @@
+@dynamicMemberLookup
 public enum Processable <Initial, Processing, Successful, Failed: Error> {
   case initial(Initial)
   case processing(Processing)
