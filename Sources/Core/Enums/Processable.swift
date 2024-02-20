@@ -1,8 +1,11 @@
+@dynamicMemberLookup
 public enum Processable <Initial, Processing, Successful, Failed: Error> {
   case initial(Initial)
   case processing(Processing)
   case successful(Successful)
   case failed(Failed)
+
+	public subscript (dynamicMember _: String) -> Void { Void() }
 }
 
 public extension Processable {
