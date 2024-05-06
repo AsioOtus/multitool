@@ -61,11 +61,11 @@ Processing == Loading<Successful>
 		mapValue { _ in newSuccessful }
 	}
 
-	mutating func setValue (with successful: Successful) {
+	mutating func setValue (_ value: Successful) {
 		self = switch self {
 		case .initial(let v):    .initial(v)
-		case .processing(let v): .processing(v.replaceValue(with: successful))
-		case .successful:        .successful(successful)
+		case .processing(let v): .processing(v.replaceValue(with: value))
+		case .successful:        .successful(value)
 		case .failed(let e):     .failed(e)
 		}
 	}
