@@ -101,6 +101,32 @@ public extension Processable {
 }
 
 public extension Processable {
+	mutating func setInitialValue (
+		with initial: Initial
+	) {
+		self = mapInitialValue { _ in initial }
+	}
+
+	mutating func setProcessingValue (
+		with processing: Processing
+	) {
+		self = mapProcessingValue { _ in processing }
+	}
+
+	mutating func setSuccessfulValue (
+		with successful: Successful
+	) {
+		self = mapSuccessfulValue { _ in successful }
+	}
+
+	mutating func setFailedValue (
+		with failed: Failed
+	) {
+		self = mapFailedValue { _ in failed }
+	}
+}
+
+public extension Processable {
 	func replaceInitial (
 		_ mapping: (Initial) -> Self
 	) -> Self {
@@ -161,6 +187,24 @@ public extension Processable {
 
 	func replaceFailed (with value: Self) -> Self {
 		replaceFailed { _ in value }
+	}
+}
+
+public extension Processable {
+	mutating func setInitial (with value: Self) {
+		self = replaceInitial { _ in value }
+	}
+
+	mutating func setProcessing (with value: Self) {
+		self = replaceProcessing { _ in value }
+	}
+
+	mutating func setSuccessful (with value: Self) {
+		self = replaceSuccessful { _ in value }
+	}
+
+	mutating func setFailed (with value: Self) {
+		self = replaceFailed { _ in value }
 	}
 }
 
