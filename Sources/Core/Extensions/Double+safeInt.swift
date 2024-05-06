@@ -1,7 +1,7 @@
 public extension Double {
-	var asInt: Int? {
+	var safeInt: Int? {
 		self >= Double(Int.min) && self < Double(Int.max)
-		? Int(self)
-		: nil
+			? Int(self)
+			: nil
 	}
 }

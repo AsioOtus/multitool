@@ -1,5 +1,9 @@
 @dynamicMemberLookup
 public final class Object<Value> {
+	public static func object (_ value: Value) -> Self {
+		.init(value)
+	}
+
 	public var value: Value
 
 	public init (_ value: Value) {

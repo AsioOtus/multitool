@@ -167,46 +167,45 @@ public extension Processable {
 public extension Processable where Failed == Error {
 	func tryMapInitialValue <NewInitial> (
 		_ mapping: (Initial) throws -> NewInitial
-	) -> Processable<NewInitial, Processing, Successful, Failed> {
-		do {
-			return switch self {
-			case .initial(let v):    .initial(try mapping(v))
-			case .processing(let v): .processing(v)
-			case .successful(let v): .successful(v)
-			case .failed(let e):     .failed(e)
-			}
-		} catch {
-			return .failed(error)
+	) rethrows -> Processable<NewInitial, Processing, Successful, Failed> {
+		return switch self {
+		case .initial(let v):    .initial(try mapping(v))
+		case .processing(let v): .processing(v)
+		case .successful(let v): .successful(v)
+		case .failed(let e):     .failed(e)
 		}
 	}
 
 	func tryMapProcessingValue <NewProcessing> (
 		_ mapping: (Processing) throws -> NewProcessing
-	) -> Processable<Initial, NewProcessing, Successful, Failed> {
-		do {
-			return switch self {
-			case .initial(let v):    .initial(v)
-			case .processing(let v): .processing(try mapping(v))
-			case .successful(let v): .successful(v)
-			case .failed(let e):     .failed(e)
-			}
-		} catch {
-			return .failed(error)
+	) rethrows -> Processable<Initial, NewProcessing, Successful, Failed> {
+		return switch self {
+		case .initial(let v):    .initial(v)
+		case .processing(let v): .processing(try mapping(v))
+		case .successful(let v): .successful(v)
+		case .failed(let e):     .failed(e)
 		}
 	}
 
 	func tryMapSuccessfulValue <NewSuccessful> (
 		_ mapping: (Successful) throws -> NewSuccessful
-	) -> Processable<Initial, Processing, NewSuccessful, Failed> {
-		do {
-			return switch self {
-			case .initial(let v):    .initial(v)
-			case .processing(let v): .processing(v)
-			case .successful(let v): .successful(try mapping(v))
-			case .failed(let e):     .failed(e)
-			}
-		} catch {
-			return .failed(error)
+	) rethrows -> Processable<Initial, Processing, NewSuccessful, Failed> {
+		return switch self {
+		case .initial(let v):    .initial(v)
+		case .processing(let v): .processing(v)
+		case .successful(let v): .successful(try mapping(v))
+		case .failed(let e):     .failed(e)
+		}
+	}
+
+	func tryMapFailedValue <NewFailed> (
+		_ mapping: (Failed) throws -> NewFailed
+	) rethrows -> Processable<Initial, Processing, Successful, NewFailed> {
+		return switch self {
+		case .initial(let v):    .initial(v)
+		case .processing(let v): .processing(v)
+		case .successful(let v): .successful(v)
+		case .failed(let e):     .failed(try mapping(e))
 		}
 	}
 }
@@ -238,13 +237,13 @@ public extension Processable {
 		case .failed(let failed): .failure(failed)
 		}
 	}
+}
 
-	init (result: Result<Successful, Failed>) {
+public extension Processable {
+	mutating func replace (with result: Result<Successful, Failed>) {
 		switch result {
-		case .success(let success):
-			self = .successful(success)
-		case .failure(let failure):
-			self = .failed(failure)
+		case .success(let success): self = .successful(success)
+		case .failure(let failure): self = .failed(failure)
 		}
 	}
 }
@@ -261,4 +260,23 @@ public extension Processable where Processing == Void {
 
 public extension Processable where Successful == Void {
 	static func successful () -> Self { .successful(Void()) }
+}
+
+public extension Result {
+	func processable <Initial, Processing> () -> Processable<Initial, Processing, Success, Failure> {
+		switch self {
+		case .success(let success): .successful(success)
+		case .failure(let failure): .failed(failure)
+		}
+	}
+
+	func processable <Initial, Processing> (
+		_ initial: Initial = Void(),
+		_ processing: Processing = Void()
+	) -> Processable<Initial, Processing, Success, Failure> {
+		switch self {
+		case .success(let success): .successful(success)
+		case .failure(let failure): .failed(failure)
+		}
+	}
 }

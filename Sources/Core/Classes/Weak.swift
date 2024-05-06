@@ -1,5 +1,9 @@
 @dynamicMemberLookup
 public final class Weak <Value: AnyObject> {
+	public static func weak (_ value: Value) -> Self {
+		.init(value)
+	}
+
 	public weak var value: Value?
 	
 	public init (_ value: Value) {
