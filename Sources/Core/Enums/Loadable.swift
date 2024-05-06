@@ -46,8 +46,7 @@ public extension Loadable where Processing == Loading<Successful> {
 public extension Loadable
 where
 Initial == Void,
-Processing == Loading<Successful>,
-Failed: Error
+Processing == Loading<Successful>
 {
 	func mapValue <NewSuccessful> (_ mapping: (Successful) -> NewSuccessful) -> Loadable<NewSuccessful> {
 		switch self {
@@ -60,6 +59,15 @@ Failed: Error
 
 	func replaceValue <NewSuccessful> (with newSuccessful: NewSuccessful) -> Loadable<NewSuccessful> {
 		mapValue { _ in newSuccessful }
+	}
+
+	mutating func setValue (with successful: Successful) {
+		self = switch self {
+		case .initial(let v):    .initial(v)
+		case .processing(let v): .processing(v.replaceValue(with: successful))
+		case .successful:        .successful(successful)
+		case .failed(let e):     .failed(e)
+		}
 	}
 
 	func tryMapValue <NewSuccessful> (_ mapping: (Successful) throws -> NewSuccessful) -> Loadable<NewSuccessful> {
