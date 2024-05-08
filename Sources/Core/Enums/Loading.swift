@@ -1,5 +1,5 @@
 public struct Loading <Value> {
-	public typealias LoadingTask = Task<Value?, Error>
+	public typealias LoadingTask = Task<Void, Error>
 
 	public let previousValue: Value?
 	public let task: LoadingTask?
