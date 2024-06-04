@@ -1,5 +1,5 @@
 @dynamicMemberLookup
-public final class Object<Value> {
+public final class Reference<Value> {
 	public static func object (_ value: Value) -> Self {
 		.init(value)
 	}
