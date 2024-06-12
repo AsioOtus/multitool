@@ -1,5 +1,5 @@
 @dynamicMemberLookup
-public final class Unowned<Value: AnyObject> {
+public final class Unowned <Value: AnyObject> {
 	public static func unowned (_ value: Value) -> Self {
 		.init(value)
 	}
