@@ -1,10 +1,10 @@
-public struct GeneralTree <Value> {
+public struct Tree <Value> {
 	public var value: Value
-	public var nodes: [GeneralTree<Value>]
+	public var nodes: [Tree<Value>]
 
 	public init (
 		value: Value,
-		nodes: [GeneralTree<Value>] = []
+		nodes: [Tree<Value>] = []
 	) {
 		self.value = value
 		self.nodes = nodes
@@ -17,7 +17,7 @@ public struct GeneralTree <Value> {
 	}
 }
 
-public extension GeneralTree {
+public extension Tree {
 	var isLeaf: Bool {
 		nodes.isEmpty
 	}
@@ -31,7 +31,7 @@ public extension GeneralTree {
 	}
 }
 
-public extension GeneralTree where Value: Identifiable {
+public extension Tree where Value: Identifiable {
 	mutating func removeNodes (withId id: Value.ID) {
 		nodes.removeAll { $0.value.id == id }
 
@@ -41,6 +41,6 @@ public extension GeneralTree where Value: Identifiable {
 	}
 }
 
-extension GeneralTree: Codable where Value: Codable { }
-extension GeneralTree: Equatable where Value: Equatable { }
-extension GeneralTree: Hashable where Value: Hashable { }
+extension Tree: Codable where Value: Codable { }
+extension Tree: Equatable where Value: Equatable { }
+extension Tree: Hashable where Value: Hashable { }
