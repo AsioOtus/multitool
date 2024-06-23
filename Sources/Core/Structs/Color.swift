@@ -16,3 +16,5 @@ public struct Color {
 		self.alpha = alpha
 	}
 }
+
+extension Color: Codable, Hashable { }
