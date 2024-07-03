@@ -1,6 +1,7 @@
 import Foundation
 
 public extension UUID {
+	static func create () -> Self { create(0, 0, 0, 0, 0) }
   static func create (_ e: Int) -> Self { create(0, 0, 0, 0, e) }
   static func create (_ d: Int, _ e: Int) -> Self { create(0, 0, 0, d, e) }
   static func create (_ c: Int, _ d: Int, _ e: Int) -> Self { create(0, 0, c, d, e) }
