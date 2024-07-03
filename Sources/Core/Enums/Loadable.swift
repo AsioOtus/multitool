@@ -1,5 +1,9 @@
 public typealias Loadable<Value> = Processable<Void, Loading<Value>, Value, Error>
 
+public extension Loadable {
+	typealias Value = Successful
+}
+
 extension Loadable: Equatable
 where
 Initial == Void,
@@ -18,12 +22,12 @@ Failed: Error
 	}
 }
 
-public extension Loadable where Processing == Loading<Successful> {
+public extension Loadable where Processing == Loading<Value> {
 	var loadingValue: Processing? { processingValue }
 
 	var isLoading: Bool { isProcessing }
 
-	var value: Successful? {
+	var value: Value? {
 		switch self {
 		case .initial: nil
 		case .processing(let loading): loading.previousValue
@@ -32,11 +36,11 @@ public extension Loadable where Processing == Loading<Successful> {
 		}
 	}
 
-	func mapLoading <NewProcessing> (_ mapping: (Processing) -> NewProcessing) -> Processable<Initial, NewProcessing, Successful, Failed> {
+	func mapLoading <NewProcessing> (_ mapping: (Processing) -> NewProcessing) -> Processable<Initial, NewProcessing, Value, Failed> {
 		mapProcessingValue(mapping)
 	}
 
-	static func loading (_ loading: Loading<Successful>) -> Self {
+	static func loading (_ loading: Loading<Value>) -> Self {
 		.processing(loading)
 	}
 
@@ -46,9 +50,9 @@ public extension Loadable where Processing == Loading<Successful> {
 public extension Loadable
 where
 Initial == Void,
-Processing == Loading<Successful>
+Processing == Loading<Value>
 {
-	func mapValue <NewSuccessful> (_ mapping: (Successful) -> NewSuccessful) -> Loadable<NewSuccessful> {
+	func mapValue <NewValue> (_ mapping: (Value) -> NewValue) -> Loadable<NewValue> {
 		switch self {
 		case .initial(let v):    .initial(v)
 		case .processing(let v): .processing(v.mapValue(mapping: mapping))
@@ -57,11 +61,11 @@ Processing == Loading<Successful>
 		}
 	}
 
-	func replaceValue <NewSuccessful> (with newSuccessful: NewSuccessful) -> Loadable<NewSuccessful> {
+	func replaceValue <NewValue> (with newSuccessful: NewValue) -> Loadable<NewValue> {
 		mapValue { _ in newSuccessful }
 	}
 
-	mutating func setValue (_ value: Successful) {
+	mutating func setValue (_ value: Value) {
 		self = switch self {
 		case .initial(let v):    .initial(v)
 		case .processing(let v): .processing(v.replaceValue(with: value))
@@ -70,7 +74,7 @@ Processing == Loading<Successful>
 		}
 	}
 
-	func tryMapValue <NewSuccessful> (_ mapping: (Successful) throws -> NewSuccessful) -> Loadable<NewSuccessful> {
+	func tryMapValue <NewSuccessful> (_ mapping: (Value) throws -> NewSuccessful) -> Loadable<NewSuccessful> {
 		do {
 			return switch self {
 			case .initial(let v):    .initial(v)
@@ -83,7 +87,18 @@ Processing == Loading<Successful>
 		}
 	}
 
-	func loading (task: Loading<Successful>.LoadingTask? = nil) -> Self {
+	func loading (task: Loading<Value>.LoadingTask? = nil) -> Self {
+		self.loadingValue?.task?.cancel()
+
+		return switch self {
+		case .initial: .loading()
+		case .processing: self
+		case .successful(let value): .loading(.init(previousValue: value, task: task))
+		case .failed: .loading()
+		}
+	}
+
+	func loadingWithoutCancelation (task: Loading<Value>.LoadingTask? = nil) -> Self {
 		switch self {
 		case .initial: .loading()
 		case .processing: self
@@ -92,7 +107,13 @@ Processing == Loading<Successful>
 		}
 	}
 
-	mutating func setLoading (task: Loading<Successful>.LoadingTask? = nil) {
+	mutating func setLoading (task: Loading<Value>.LoadingTask? = nil) {
+		self.loadingValue?.task?.cancel()
+
+		self = self.loading(task: task)
+	}
+
+	mutating func setLoadingWithoutCancelation (task: Loading<Value>.LoadingTask? = nil) {
 		self = self.loading(task: task)
 	}
 }
@@ -100,7 +121,7 @@ Processing == Loading<Successful>
 public extension Loadable
 where
 Initial == Void,
-Processing == Loading<Successful>,
+Processing == Loading<Value>,
 Failed: Error {
 	func replaceWithNone () -> Loadable<None> {
 		replaceValue(with: .init())
@@ -153,10 +174,10 @@ Failed == Error
 public extension Loadable
 where
 Initial == Void,
-Processing == Loading<Successful>,
+Processing == Loading<Value>,
 Failed == Error
 {
-	init (catching: () throws -> Successful) {
+	init (catching: () throws -> Value) {
 		do {
 			self = try .successful(catching())
 		} catch {
@@ -164,7 +185,7 @@ Failed == Error
 		}
 	}
 
-	init (asyncCatching: () async throws -> Successful) async {
+	init (asyncCatching: () async throws -> Value) async {
 		do {
 			self = try await .successful(asyncCatching())
 		} catch {
@@ -173,22 +194,22 @@ Failed == Error
 	}
 
 	func loading (
-		action: () async throws -> Loading<Successful>.LoadingTask
+		action: () async throws -> Loading<Value>.LoadingTask
 	) async rethrows -> Self {
 		let task = try await action()
 		return loading(task: task)
 	}
 
 	mutating func setLoading (
-		action: () async throws -> Loading<Successful>.LoadingTask
+		action: () async throws -> Loading<Value>.LoadingTask
 	) async rethrows {
 		let task = try await action()
 		self = loading(task: task)
 	}
 
 	static func loading (
-		previousValue: Successful? = nil,
-		action: () async throws -> Loading<Successful>.LoadingTask
+		previousValue: Value? = nil,
+		action: () async throws -> Loading<Value>.LoadingTask
 	) async rethrows -> Self {
 		let task = try await action()
 		return .loading(.init(previousValue: previousValue, task: task))
@@ -196,11 +217,11 @@ Failed == Error
 }
 
 public extension Loadable {
-	var optionalSuccessful: Processable<Initial, Processing, Successful?, Failed> {
+	var optionalSuccessful: Processable<Initial, Processing, Value?, Failed> {
 		mapSuccessfulValue { $0 }
 	}
 
-	func replaceFailed (with successful: Successful) -> Self {
+	func replaceFailed (with successful: Value) -> Self {
 		if case .failed = self {
 			return .successful(successful)
 		} else {
@@ -210,14 +231,14 @@ public extension Loadable {
 }
 
 public extension Result {
-	func loadable <Successful> (_ mapping: (Success) -> Loadable<Successful>) -> Loadable<Successful> {
+	func loadable <Value> (_ mapping: (Success) -> Loadable<Value>) -> Loadable<Value> {
 		switch self {
 		case .success(let success): mapping(success)
 		case .failure(let error): .failed(error)
 		}
 	}
 
-	func loadable <Successful> (_ mapping: (Success) -> Successful) -> Loadable<Successful> {
+	func loadable <Value> (_ mapping: (Success) -> Value) -> Loadable<Value> {
 		switch self {
 		case .success(let success): .successful(mapping(success))
 		case .failure(let error): .failed(error)

@@ -15,18 +15,23 @@ public struct Loading <Value> {
 
 extension Loading {
 	func replaceValue (with value: Value) -> Self {
-		.init(previousValue: value)
+		.init(
+			previousValue: value,
+			task: task
+		)
 	}
 
 	func mapValue <NewValue> (mapping: (Value) -> NewValue) -> Loading<NewValue> {
 		.init(
-			previousValue: previousValue.map(mapping)
+			previousValue: previousValue.map(mapping),
+			task: task
 		)
 	}
 
 	func mapValue <NewValue> (mapping: (Value) throws -> NewValue) rethrows -> Loading<NewValue> {
 		.init(
-			previousValue: try previousValue.map(mapping)
+			previousValue: try previousValue.map(mapping),
+			task: task
 		)
 	}
 }
