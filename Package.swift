@@ -12,12 +12,20 @@ let package = Package(
 		.library(
 			name: "Multitool",
 			targets: ["Multitool"]
-		)
+		),
+		.library(
+			name: "MultitoolTesting",
+			targets: ["MultitoolTesting"]
+		),
 	],
 	targets: [
 		.target(
 			name: "Multitool",
       path: "Sources/Core"
+		),
+		.target(
+			name: "MultitoolTesting",
+			path: "Sources/Testing"
 		),
 		.target(
 			name: "Drafts"
@@ -31,10 +39,20 @@ let package = Package(
 			name: "DraftsTestground",
 			dependencies: ["Drafts"]
 		),
-		
+
 		.testTarget(
 			name: "CoreTests",
-			dependencies: ["Multitool"]
-		)
+			dependencies: [
+				"Multitool",
+				"MultitoolTesting"
+			]
+		),
+		.testTarget(
+			name: "LoadableTests",
+			dependencies: [
+				"Multitool",
+				"MultitoolTesting"
+			]
+		),
 	]
 )

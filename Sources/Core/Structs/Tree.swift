@@ -27,7 +27,7 @@ public extension Tree {
 	}
 
 	var depth: Int {
-		nodes.map(\.depth).max() ?? 0 + 1
+		(nodes.map(\.depth).max() ?? 0) + 1
 	}
 }
 

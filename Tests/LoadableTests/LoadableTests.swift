@@ -22,10 +22,26 @@ final class LoadableTests: XCTestCase {
 		XCTAssertTrue(task.isCancelled)
 	}
 
-	func test_setLoading () async throws {
+	func test_setLoading_cancellation () async throws {
 		// Given
 		let task = LoadingTask { }
-		var loadable = Loadable<String>.initial()
+		var loadable = Loadable<String>.loading(task: task)
+
+		// When
+		loadable.setLoading()
+
+		// Then
+		await loadable.loadingValue?.task?.wait()
+
+		XCTAssertEqual(loadable, .loading(.init(task: nil)))
+		XCTAssertTrue(task.isCancelled)
+	}
+
+	func test_setLoadingWithTask () async throws {
+		// Given
+		let initialTask = LoadingTask { }
+		let task = LoadingTask { }
+		var loadable = Loadable<String>.loading(task: initialTask)
 
 		// When
 		loadable.setLoading(task: task)
@@ -34,6 +50,7 @@ final class LoadableTests: XCTestCase {
 		await loadable.loadingValue?.task?.wait()
 
 		XCTAssertEqual(loadable, .loading(task: task))
+		XCTAssertTrue(initialTask.isCancelled)
 	}
 
 	func test_setLoadingAction () async throws {
