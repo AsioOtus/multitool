@@ -1,10 +1,12 @@
 public struct Path {
-	public let components: [String]
+	public typealias Components = [String]
+
+	public let components: Components
 	public let separator: String
 
 	public var divided: [Self] { components.map(Self.init) }
 
-	public init (_ components: [String], separator: String = ".") {
+	public init (_ components: Components, separator: String = ".") {
 		self.components = components
 		self.separator = separator
 	}
@@ -61,3 +63,19 @@ extension Path: CustomStringConvertible {
 extension Path: Codable { }
 
 extension Path: Equatable { }
+
+extension Path: Collection {
+	public typealias Index = Components.Index
+	public typealias Element = Components.Element
+
+	public var startIndex: Index { components.startIndex }
+	public var endIndex: Index { components.endIndex }
+
+	public subscript (index: Index) -> Iterator.Element {
+		components[index]
+	}
+
+	public func index (after i: Index) -> Index {
+		components.index(after: i)
+	}
+}
