@@ -1,4 +1,4 @@
-public struct Color {
+public struct RGBA {
 	public let red: Double
 	public let green: Double
 	public let blue: Double
@@ -17,4 +17,15 @@ public struct Color {
 	}
 }
 
-extension Color: Codable, Hashable { }
+public extension RGBA {
+	func random () -> Self {
+		.init(
+			red: .random(in: 0...1),
+			green: .random(in: 0...1),
+			blue: .random(in: 0...1),
+			alpha: .random(in: 0...1)
+		)
+	}
+}
+
+extension RGBA: Codable, Hashable { }
