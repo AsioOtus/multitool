@@ -101,32 +101,6 @@ public extension Processable {
 }
 
 public extension Processable {
-	mutating func setInitialValue (
-		_ initial: Initial
-	) {
-		self = mapInitialValue { _ in initial }
-	}
-
-	mutating func setProcessingValue (
-		_ processing: Processing
-	) {
-		self = mapProcessingValue { _ in processing }
-	}
-
-	mutating func setSuccessfulValue (
-		_ successful: Successful
-	) {
-		self = mapSuccessfulValue { _ in successful }
-	}
-
-	mutating func setFailedValue (
-		_ failed: Failed
-	) {
-		self = mapFailedValue { _ in failed }
-	}
-}
-
-public extension Processable {
 	func replaceInitial (
 		_ mapping: (Initial) -> Self
 	) -> Self {
@@ -187,24 +161,6 @@ public extension Processable {
 
 	func replaceFailed (with value: Self) -> Self {
 		replaceFailed { _ in value }
-	}
-}
-
-public extension Processable {
-	mutating func setInitial (_ value: Self) {
-		self = replaceInitial { _ in value }
-	}
-
-	mutating func setProcessing (_ value: Self) {
-		self = replaceProcessing { _ in value }
-	}
-
-	mutating func setSuccessful (_ value: Self) {
-		self = replaceSuccessful { _ in value }
-	}
-
-	mutating func setFailed (_ value: Self) {
-		self = replaceFailed { _ in value }
 	}
 }
 
@@ -279,15 +235,6 @@ public extension Processable {
 		case .processing: nil
 		case .successful(let successful): .success(successful)
 		case .failed(let failed): .failure(failed)
-		}
-	}
-}
-
-public extension Processable {
-	mutating func replace (with result: Result<Successful, Failed>) {
-		switch result {
-		case .success(let success): self = .successful(success)
-		case .failure(let failure): self = .failed(failure)
 		}
 	}
 }

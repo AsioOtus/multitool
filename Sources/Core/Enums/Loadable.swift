@@ -23,9 +23,19 @@ Failed: Error
 }
 
 public extension Loadable where Processing == Loading<Value> {
+	@discardableResult
+	func cancel () -> Self {
+		loadingValue?.task?.cancel()
+		return self
+	}
+
 	var loadingValue: Processing? { processingValue }
 
 	var isLoading: Bool { isProcessing }
+
+	func mapLoading <NewProcessing> (_ mapping: (Processing) -> NewProcessing) -> Processable<Initial, NewProcessing, Value, Failed> {
+		mapProcessingValue(mapping)
+	}
 
 	var value: Value? {
 		switch self {
@@ -36,15 +46,133 @@ public extension Loadable where Processing == Loading<Value> {
 		}
 	}
 
-	func mapLoading <NewProcessing> (_ mapping: (Processing) -> NewProcessing) -> Processable<Initial, NewProcessing, Value, Failed> {
-		mapProcessingValue(mapping)
+	func loading () -> Self {
+		switch self {
+		case .initial: .loading()
+		case .processing: self
+		case .successful(let value): .loading(.init(previousValue: value))
+		case .failed: .loading()
+		}
+	}
+
+	func loading (task: LoadingTask?) -> Self {
+		switch self {
+		case .initial: .loading(.init(task: task))
+		case .processing(let loading): .loading(.init(previousValue: loading.previousValue, task: task))
+		case .successful(let value): .loading(.init(previousValue: value, task: task))
+		case .failed: .loading(.init(task: task))
+		}
+	}
+
+	func loading (
+		action: () throws -> LoadingTask
+	) rethrows -> Self {
+		loading(task: try action())
+	}
+
+	static func loading () -> Self {
+		.processing(.init())
 	}
 
 	static func loading (_ loading: Loading<Value>) -> Self {
 		.processing(loading)
 	}
 
-	static func loading () -> Self { .processing(.init()) }
+	static func loading (
+		previousValue: Value? = nil,
+		task: LoadingTask
+	) -> Self {
+		.processing(.init(previousValue: previousValue, task: task))
+	}
+
+	static func loading (
+		previousValue: Value? = nil,
+		action: () throws -> LoadingTask
+	) rethrows -> Self {
+		.processing(.init(previousValue: previousValue, task: try action()))
+	}
+}
+
+public extension Loadable
+where
+Processing == Loading<Value>,
+Initial == Void
+{
+	mutating func setInitialValue () {
+		self.cancel()
+		self = .initial()
+	}
+
+	mutating func setSuccessfulValue (
+		_ successful: Successful
+	) {
+		self.cancel()
+		self = .successful(successful)
+	}
+
+	mutating func setFailedValue (
+		_ failed: Failed
+	) {
+		self.cancel()
+		self = .failed(failed)
+	}
+
+	mutating func setLoading () {
+		self.cancel()
+		self = self.loading(task: nil)
+	}
+
+	mutating func setLoading (task: LoadingTask?) {
+		self.cancel()
+		self = self.loading(task: task)
+	}
+
+	mutating func setLoading (
+		action: () throws -> LoadingTask
+	) rethrows {
+		self.setLoading(task: try action())
+	}
+}
+
+public extension Loadable where Processing == Loading<Value> {
+	mutating func setIfLoading (_ loading: Loading<Value>) {
+		self.cancel()
+		self = replaceProcessingValue(with: loading)
+	}
+
+	mutating func setIfSuccessful (_ value: Value) {
+		self = replaceSuccessfulValue(with: value)
+	}
+
+	mutating func setIfFailed (_ failed: Failed) {
+		self = replaceFailedValue(with: failed)
+	}
+
+	mutating func setIfInitial (_ value: Self) {
+		self = replaceInitial { _ in value }
+	}
+
+	mutating func setIfLoading (_ value: Self) {
+		self.cancel()
+		self = replaceProcessing { _ in value }
+	}
+
+	mutating func setIfSuccessful (_ value: Self) {
+		self = replaceSuccessful { _ in value }
+	}
+
+	mutating func setIfFailed (_ value: Self) {
+		self = replaceFailed { _ in value }
+	}
+}
+
+public extension Loadable {
+	mutating func replace (with result: Result<Successful, Failed>) {
+		switch result {
+		case .success(let success): self = .successful(success)
+		case .failure(let failure): self = .failed(failure)
+		}
+	}
 }
 
 public extension Loadable
@@ -86,36 +214,6 @@ Processing == Loading<Value>
 			return .failed(error)
 		}
 	}
-
-	func loading (task: Loading<Value>.LoadingTask? = nil) -> Self {
-		self.loadingValue?.task?.cancel()
-
-		return switch self {
-		case .initial: .loading()
-		case .processing: self
-		case .successful(let value): .loading(.init(previousValue: value, task: task))
-		case .failed: .loading()
-		}
-	}
-
-	func loadingWithoutCancelation (task: Loading<Value>.LoadingTask? = nil) -> Self {
-		switch self {
-		case .initial: .loading()
-		case .processing: self
-		case .successful(let value): .loading(.init(previousValue: value, task: task))
-		case .failed: .loading()
-		}
-	}
-
-	mutating func setLoading (task: Loading<Value>.LoadingTask? = nil) {
-		self.loadingValue?.task?.cancel()
-
-		self = self.loading(task: task)
-	}
-
-	mutating func setLoadingWithoutCancelation (task: Loading<Value>.LoadingTask? = nil) {
-		self = self.loading(task: task)
-	}
 }
 
 public extension Loadable
@@ -151,7 +249,7 @@ Failed == Error
 	}
 
 	static func result (to loadable: inout Self, catching: () throws -> Successful) {
-		loadable = .loading()
+		loadable.setLoading()
 
 		do {
 			loadable = try .successful(catching())
@@ -161,7 +259,7 @@ Failed == Error
 	}
 
 	static func result (to loadable: inout Self, asyncCatching: () async throws -> Successful) async {
-		loadable = .loading()
+		loadable.setLoading()
 
 		do {
 			loadable = try await .successful(asyncCatching())
@@ -191,28 +289,6 @@ Failed == Error
 		} catch {
 			self = .failed(error)
 		}
-	}
-
-	func loading (
-		action: () async throws -> Loading<Value>.LoadingTask
-	) async rethrows -> Self {
-		let task = try await action()
-		return loading(task: task)
-	}
-
-	mutating func setLoading (
-		action: () async throws -> Loading<Value>.LoadingTask
-	) async rethrows {
-		let task = try await action()
-		self = loading(task: task)
-	}
-
-	static func loading (
-		previousValue: Value? = nil,
-		action: () async throws -> Loading<Value>.LoadingTask
-	) async rethrows -> Self {
-		let task = try await action()
-		return .loading(.init(previousValue: previousValue, task: task))
 	}
 }
 
