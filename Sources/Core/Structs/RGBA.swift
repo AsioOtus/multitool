@@ -8,7 +8,7 @@ public struct RGBA {
 		red: Double,
 		green: Double,
 		blue: Double,
-		alpha: Double
+		alpha: Double = 1
 	) {
 		self.red = red
 		self.green = green
