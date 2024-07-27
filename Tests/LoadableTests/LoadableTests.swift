@@ -5,26 +5,26 @@ import XCTest
 final class LoadableTests: XCTestCase {
 	func test_loadableCancellation () async throws {
 		// Given
-		let task = LoadingTask { }
+		let task = VoidTask { }
 
 		// When
 		let loadable = Loadable<String>.loading(task: task)
 
 		// Then
-		XCTAssertEqual(loadable, .processing(.init(previousValue: nil, task: task)))
+		XCTAssertEqual(loadable, .loading(.init(previousValue: nil, task: task)))
 		XCTAssertFalse(task.isCancelled)
 
 		// When
 		loadable.cancel()
 
 		// Then
-		XCTAssertEqual(loadable, .processing(.init(previousValue: nil, task: task)))
+		XCTAssertEqual(loadable, .loading(.init(previousValue: nil, task: task)))
 		XCTAssertTrue(task.isCancelled)
 	}
 
 	func test_setLoading_cancellation () async throws {
 		// Given
-		let task = LoadingTask { }
+		let task = VoidTask { }
 		var loadable = Loadable<String>.loading(task: task)
 
 		// When
@@ -39,8 +39,8 @@ final class LoadableTests: XCTestCase {
 
 	func test_setLoadingWithTask () async throws {
 		// Given
-		let initialTask = LoadingTask { }
-		let task = LoadingTask { }
+		let initialTask = VoidTask { }
+		let task = VoidTask { }
 		var loadable = Loadable<String>.loading(task: initialTask)
 
 		// When
@@ -57,8 +57,8 @@ final class LoadableTests: XCTestCase {
 		// Given
 		let initialValue = "initial"
 
-		let initialTask = LoadingTask { }
-		let overwritingTask = LoadingTask { }
+		let initialTask = VoidTask { }
+		let overwritingTask = VoidTask { }
 
 		var loadable = Loadable<String>.successful(initialValue)
 
@@ -82,7 +82,7 @@ final class LoadableTests: XCTestCase {
 	func test_loading () async {
 		// Given
 		let initialValue = "initial"
-		let initialTask = LoadingTask { }
+		let initialTask = VoidTask { }
 		let loadable = Loadable.loading(previousValue: initialValue, task: initialTask)
 
 		// When
@@ -95,8 +95,8 @@ final class LoadableTests: XCTestCase {
 	func test_loadingWithNewTask () async {
 		// Given
 		let initialValue = "initial"
-		let initialTask = LoadingTask { }
-		let overwritingTask = LoadingTask { }
+		let initialTask = VoidTask { }
+		let overwritingTask = VoidTask { }
 		let loadable = Loadable.loading(previousValue: initialValue, task: initialTask)
 
 		// When
@@ -111,8 +111,8 @@ final class LoadableTests: XCTestCase {
 	func test_loadingCancellationWithNewTask () async {
 		// Given
 		let initialValue = "initial"
-		let initialTask = LoadingTask { }
-		let overwritingTask = LoadingTask { }
+		let initialTask = VoidTask { }
+		let overwritingTask = VoidTask { }
 		let loadable = Loadable.loading(previousValue: initialValue, task: initialTask)
 
 		// When
