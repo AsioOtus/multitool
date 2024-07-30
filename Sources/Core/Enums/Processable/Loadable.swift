@@ -7,6 +7,8 @@ public enum LoadableValue <Value, Failed: Error, LoadingTask> {
 	case failed(Failed)
 }
 
+extension LoadableValue: Hashable where Value: Hashable, LoadingTask: Hashable, Failed: Hashable { }
+
 public extension LoadableValue {
 	var debugName: String {
 		switch self {

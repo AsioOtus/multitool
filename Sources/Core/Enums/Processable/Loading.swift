@@ -1,10 +1,10 @@
-public struct Loading <Value, LT> {
+public struct Loading <Value, LoadingTask> {
 	public let previousValue: Value?
-	public let task: LT?
+	public let task: LoadingTask?
 
 	public init (
 		previousValue: Value? = nil,
-		task: LT?
+		task: LoadingTask?
 	) {
 		self.previousValue = previousValue
 		self.task = task
@@ -12,8 +12,8 @@ public struct Loading <Value, LT> {
 
 	public init (
 		previousValue: Value? = nil,
-		task: LT? = nil
-	) where LT == VoidTask {
+		task: LoadingTask? = nil
+	) where LoadingTask == VoidTask {
 		self.previousValue = previousValue
 		self.task = task
 	}
@@ -27,14 +27,14 @@ extension Loading {
 		)
 	}
 
-	func mapValue <NewValue> (mapping: (Value) -> NewValue) -> Loading<NewValue, LT> {
+	func mapValue <NewValue> (mapping: (Value) -> NewValue) -> Loading<NewValue, LoadingTask> {
 		.init(
 			previousValue: previousValue.map(mapping),
 			task: task
 		)
 	}
 
-	func mapValue <NewValue> (mapping: (Value) throws -> NewValue) rethrows -> Loading<NewValue, LT> {
+	func mapValue <NewValue> (mapping: (Value) throws -> NewValue) rethrows -> Loading<NewValue, LoadingTask> {
 		.init(
 			previousValue: try previousValue.map(mapping),
 			task: task
@@ -42,4 +42,5 @@ extension Loading {
 	}
 }
 
-extension Loading: Equatable where Value: Equatable, LT: Equatable { }
+extension Loading: Equatable where Value: Equatable, LoadingTask: Equatable { }
+extension Loading: Hashable where Value: Hashable, LoadingTask: Hashable { }
