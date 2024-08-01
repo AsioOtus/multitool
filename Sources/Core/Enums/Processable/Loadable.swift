@@ -90,7 +90,7 @@ public extension LoadableValue where Failed == Error {
 		}
 	}
 
-	func mapValue <NewValue> (_ mapping: (Value) throws -> NewValue) -> LoadableValue<NewValue, Failed, LoadingTask> where Failed == Error {
+	func catchingMapValue <NewValue> (_ mapping: (Value) throws -> NewValue) -> LoadableValue<NewValue, Failed, LoadingTask> where Failed == Error {
 		do {
 			return switch self {
 			case .initial:               .initial
