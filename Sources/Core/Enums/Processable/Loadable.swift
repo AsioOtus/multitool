@@ -73,9 +73,7 @@ public extension LoadableValue where Failed == Error {
 			loadable = .failed(error)
 		}
 	}
-}
 
-public extension LoadableValue where Failed == Error {
 	init (catching: () throws -> Value) {
 		do {
 			self = try .successful(catching())
@@ -89,6 +87,19 @@ public extension LoadableValue where Failed == Error {
 			self = try await .successful(asyncCatching())
 		} catch {
 			self = .failed(error)
+		}
+	}
+
+	func mapValue <NewValue> (_ mapping: (Value) throws -> NewValue) -> LoadableValue<NewValue, Failed, LoadingTask> where Failed == Error {
+		do {
+			return switch self {
+			case .initial:               .initial
+			case .loading(let loading):  .loading(try loading.mapValue(mapping: mapping))
+			case .successful(let value): .successful(try mapping(value))
+			case .failed(let error):     .failed(error)
+			}
+		} catch {
+			return .failed(error)
 		}
 	}
 }
