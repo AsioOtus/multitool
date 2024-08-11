@@ -2,7 +2,7 @@ import XCTest
 
 @testable import Multitool
 
-final class LoadableTests: XCTestCase {
+final class LoadableTaskTests: XCTestCase {
 	func test_loadableCancellation () async throws {
 		// Given
 		let task = VoidTask { }
@@ -11,14 +11,14 @@ final class LoadableTests: XCTestCase {
 		let loadable = Loadable<String>.loading(task: task)
 
 		// Then
-		XCTAssertEqual(loadable, .loading(.init(previousValue: nil, task: task)))
+		XCTAssertEqual(loadable, .loading(task: task))
 		XCTAssertFalse(task.isCancelled)
 
 		// When
-		loadable.cancel()
+		loadable.canceled()
 
 		// Then
-		XCTAssertEqual(loadable, .loading(.init(previousValue: nil, task: task)))
+		XCTAssertEqual(loadable, .loading(task: task))
 		XCTAssertTrue(task.isCancelled)
 	}
 
@@ -31,9 +31,9 @@ final class LoadableTests: XCTestCase {
 		loadable.setLoading()
 
 		// Then
-		await loadable.loadingValue?.task?.wait()
+		await loadable.loadingTask?.wait()
 
-		XCTAssertEqual(loadable, .loading(.init(task: nil)))
+		XCTAssertEqual(loadable, .loading())
 		XCTAssertTrue(task.isCancelled)
 	}
 
@@ -47,7 +47,7 @@ final class LoadableTests: XCTestCase {
 		loadable.setLoading(task: task)
 
 		// Then
-		await loadable.loadingValue?.task?.wait()
+		await loadable.loadingTask?.wait()
 
 		XCTAssertEqual(loadable, .loading(task: task))
 		XCTAssertTrue(initialTask.isCancelled)
@@ -73,23 +73,25 @@ final class LoadableTests: XCTestCase {
 
 		// Then
 		await initialTask.wait()
-		await loadable.loadingValue?.task?.wait()
+		await loadable.loadingTask?.wait()
 
 		XCTAssertTrue(initialTask.isCancelled)
-		XCTAssertEqual(loadable.loadingValue?.previousValue, initialValue)
+		XCTAssertEqual(loadable.loadingValue, initialValue)
 	}
 
 	func test_loading () async {
 		// Given
 		let initialValue = "initial"
 		let initialTask = VoidTask { }
-		let loadable = Loadable.loading(previousValue: initialValue, task: initialTask)
+		let loadable = Loadable.loading(task: initialTask, previousValue: initialValue)
 
 		// When
 		let newLoadable = loadable.loading()
 
 		// Then
-		XCTAssertEqual(newLoadable.loadingValue, .init(previousValue: initialValue, task: initialTask))
+		XCTAssertEqual(newLoadable.loadingValue, initialValue)
+		XCTAssertEqual(newLoadable.loadingTask, initialTask)
+		XCTAssertFalse(initialTask.isCancelled)
 	}
 
 	func test_loadingWithNewTask () async {
@@ -97,14 +99,16 @@ final class LoadableTests: XCTestCase {
 		let initialValue = "initial"
 		let initialTask = VoidTask { }
 		let overwritingTask = VoidTask { }
-		let loadable = Loadable.loading(previousValue: initialValue, task: initialTask)
+		let loadable = Loadable.loading(task: initialTask, previousValue: initialValue)
 
 		// When
 		let newLoadable = loadable.loading(task: overwritingTask)
 
 		// Then
-		XCTAssertEqual(loadable.loadingValue, .init(previousValue: initialValue, task: initialTask))
-		XCTAssertEqual(newLoadable.loadingValue, .init(previousValue: initialValue, task: overwritingTask))
+		XCTAssertEqual(loadable.loadingValue, initialValue)
+		XCTAssertEqual(newLoadable.loadingValue, initialValue)
+		XCTAssertEqual(loadable.loadingTask, initialTask)
+		XCTAssertEqual(newLoadable.loadingTask, overwritingTask)
 		XCTAssertFalse(initialTask.isCancelled)
 	}
 
@@ -113,14 +117,16 @@ final class LoadableTests: XCTestCase {
 		let initialValue = "initial"
 		let initialTask = VoidTask { }
 		let overwritingTask = VoidTask { }
-		let loadable = Loadable.loading(previousValue: initialValue, task: initialTask)
+		let loadable = Loadable.loading(task: initialTask, previousValue: initialValue)
 
 		// When
-		let newLoadable = loadable.cancel().loading(task: overwritingTask)
+		let newLoadable = loadable.canceled().loading(task: overwritingTask)
 
 		// Then
-		XCTAssertEqual(loadable.loadingValue, .init(previousValue: initialValue, task: initialTask))
-		XCTAssertEqual(newLoadable.loadingValue, .init(previousValue: initialValue, task: overwritingTask))
+		XCTAssertEqual(loadable.loadingValue, initialValue)
+		XCTAssertEqual(newLoadable.loadingValue, initialValue)
+		XCTAssertEqual(loadable.loadingTask, initialTask)
+		XCTAssertEqual(newLoadable.loadingTask, overwritingTask)
 		XCTAssertTrue(initialTask.isCancelled)
 	}
 }
