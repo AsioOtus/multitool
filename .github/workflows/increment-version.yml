@@ -33,4 +33,4 @@ jobs:
     - name: Create git tag
       run: |
         git tag "$VERSION"
-        git push origin "v$VERSION"
+        git push origin "$VERSION"
