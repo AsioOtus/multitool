@@ -103,6 +103,10 @@ public extension LoadableValue {
 		self = self.loading(task: task)
 	}
 
+	mutating func setLoading (task: LoadingTask?, previousValue: Value?) {
+		self = .loading(task: task, previousValue: previousValue)
+	}
+
 	mutating func setLoading () {
 		self.setLoading(task: nil)
 	}

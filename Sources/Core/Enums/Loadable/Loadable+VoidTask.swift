@@ -31,29 +31,37 @@ public extension LoadableValue where LoadingTask == VoidTask {
 }
 
 public extension LoadableValue where LoadingTask: LoadableCancellableTask {
-	@discardableResult
 	func canceled () -> Self {
 		loadingTask?.cancel()
 		return self
 	}
 
+	func cancel () {
+		loadingTask?.cancel()
+	}
+
 	mutating func set (_ another: Self) {
-		self.canceled()
+		self.cancel()
 		self = another
 	}
 
 	mutating func setInitial () {
-		self.canceled()
+		self.cancel()
 		self = .initial
 	}
 
 	mutating func setLoading (task: LoadingTask?) {
-		self.canceled()
+		self.cancel()
 		self = self.loading(task: task)
 	}
 
 	mutating func setLoading () {
 		self.setLoading(task: nil)
+	}
+
+	mutating func setLoading (task: LoadingTask?, previousValue: Value?) {
+		self.cancel()
+		self = .loading(task: task, previousValue: previousValue)
 	}
 
 	mutating func setLoading (
@@ -65,14 +73,14 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask {
 	mutating func setSuccessful (
 		_ value: Value
 	) {
-		self.canceled()
+		self.cancel()
 		self = .successful(value)
 	}
 
 	mutating func setFailed (
 		_ failed: Failed
 	) {
-		self.canceled()
+		self.cancel()
 		self = .failed(error: failed, previousValue: value)
 	}
 }

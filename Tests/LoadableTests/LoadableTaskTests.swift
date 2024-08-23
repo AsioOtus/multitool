@@ -15,7 +15,7 @@ final class LoadableTaskTests: XCTestCase {
 		XCTAssertFalse(task.isCancelled)
 
 		// When
-		loadable.canceled()
+		loadable.cancel()
 
 		// Then
 		XCTAssertEqual(loadable, .loading(task: task))
