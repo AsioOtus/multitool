@@ -6,6 +6,14 @@ public extension LoadableValue where LoadingTask == VoidTask {
 		self.setLoading(task: Task(priority: priority) { try await action() })
 	}
 
+	mutating func setLoading (
+		previousValue: Value?,
+		priority: TaskPriority? = nil,
+		action: @escaping () async throws -> Void
+	) rethrows {
+		self.setLoading(task: Task(priority: priority) { try await action() }, previousValue: previousValue)
+	}
+
 	func loading (
 		priority: TaskPriority? = nil,
 		action: @escaping () async throws -> Void
