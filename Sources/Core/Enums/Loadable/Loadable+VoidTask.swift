@@ -70,6 +70,13 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask {
 		self.setLoading(task: try action())
 	}
 
+	mutating func setLoading (
+		previousValue: Value?,
+		action: () throws -> LoadingTask
+	) rethrows {
+		self.setLoading(task: try action(), previousValue: previousValue)
+	}
+
 	mutating func setSuccessful (
 		_ value: Value
 	) {
