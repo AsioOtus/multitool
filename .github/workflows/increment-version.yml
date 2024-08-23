@@ -1,0 +1,36 @@
+name: Increment Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Fetch all tags
+      run: git fetch --tags
+
+    - name: Get the latest tag
+      run: |
+        TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo "LATEST_TAG=$TAG" >> $GITHUB_ENV
+
+    - name: Increment version
+      run: |
+        if [ -z "$LATEST_TAG" ]; then
+          VERSION="0.0.0"
+        else
+          VERSION=$(echo $LATEST_TAG | awk -F. '{print $1"."$2"."$3+1}')
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Create git tag
+      run: |
+        git tag "$VERSION"
+        git push origin "v$VERSION"
