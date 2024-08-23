@@ -16,6 +16,13 @@ jobs:
     - name: Fetch all tags
       run: git fetch --tags
 
+    - name: Check if the latest commit is already tagged
+      run: |
+        if git describe --exact-match --tags $(git rev-parse HEAD); then
+          echo "Latest commit has tag."
+          exit 0
+        fi
+
     - name: Get the latest tag
       run: |
         TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
