@@ -57,9 +57,9 @@ public extension LoadableValue where Failed == Error {
 		do {
 			return switch self {
 			case .initial:                              .initial
-			case .loading(let task, let previousValue): .loading(task: task, previousValue: try previousValue.map(mapping))
+			case .loading(let task, let value): .loading(task: task, value: try value.map(mapping))
 			case .successful(let value):                .successful(try mapping(value))
-			case .failed(let error, let previousValue): .failed(error: error, previousValue: try previousValue.map(mapping))
+			case .failed(let error, let value): .failed(error: error, value: try value.map(mapping))
 			}
 		} catch {
 			return .failed(error: error)
@@ -72,12 +72,12 @@ public extension LoadableValue where Failed == Error {
 		do {
 			return switch self {
 			case .initial:                              .initial
-			case .loading(let task, let previousValue): .loading(task: task, previousValue: try previousValue.map(mapping))
+			case .loading(let task, let value): .loading(task: task, value: try value.map(mapping))
 			case .successful(let value):                .successful(try mapping(value))
-			case .failed(let error, let previousValue): .failed(error: error, previousValue: try previousValue.map(mapping))
+			case .failed(let error, let value): .failed(error: error, value: try value.map(mapping))
 			}
 		} catch {
-			return .failed(error: error, previousValue: value)
+			return .failed(error: error, value: value)
 		}
 	}
 }

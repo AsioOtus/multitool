@@ -83,7 +83,7 @@ final class LoadableTaskTests: XCTestCase {
 		// Given
 		let initialValue = "initial"
 		let initialTask = VoidTask { }
-		let loadable = Loadable.loading(task: initialTask, previousValue: initialValue)
+		let loadable = Loadable.loading(task: initialTask, value: initialValue)
 
 		// When
 		let newLoadable = loadable.loading()
@@ -99,7 +99,7 @@ final class LoadableTaskTests: XCTestCase {
 		let initialValue = "initial"
 		let initialTask = VoidTask { }
 		let overwritingTask = VoidTask { }
-		let loadable = Loadable.loading(task: initialTask, previousValue: initialValue)
+		let loadable = Loadable.loading(task: initialTask, value: initialValue)
 
 		// When
 		let newLoadable = loadable.loading(task: overwritingTask)
@@ -117,7 +117,7 @@ final class LoadableTaskTests: XCTestCase {
 		let initialValue = "initial"
 		let initialTask = VoidTask { }
 		let overwritingTask = VoidTask { }
-		let loadable = Loadable.loading(task: initialTask, previousValue: initialValue)
+		let loadable = Loadable.loading(task: initialTask, value: initialValue)
 
 		// When
 		let newLoadable = loadable.canceled().loading(task: overwritingTask)

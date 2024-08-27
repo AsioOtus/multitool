@@ -7,11 +7,11 @@ public extension LoadableValue where LoadingTask == VoidTask {
 	}
 
 	mutating func setLoading (
-		previousValue: Value?,
+		value: Value?,
 		priority: TaskPriority? = nil,
 		action: @escaping () async throws -> Void
 	) rethrows {
-		self.setLoading(task: Task(priority: priority) { try await action() }, previousValue: previousValue)
+		self.setLoading(task: Task(priority: priority) { try await action() }, value: value)
 	}
 
 	func loading (
@@ -22,19 +22,19 @@ public extension LoadableValue where LoadingTask == VoidTask {
 	}
 
 	static func loading (
-		previousValue: Value? = nil,
+		value: Value? = nil,
 		priority: TaskPriority? = nil,
 		action: @escaping () async throws -> Void
 	) -> Self {
-		.loading(task: Task(priority: priority) { try await action() }, previousValue: previousValue)
+		.loading(task: Task(priority: priority) { try await action() }, value: value)
 	}
 
 	func loading () -> Self {
-		.loading(task: loadingTask, previousValue: value)
+		.loading(task: loadingTask, value: value)
 	}
 
 	static func loading () -> Self {
-		.loading(task: nil, previousValue: nil)
+		.loading(task: nil, value: nil)
 	}
 }
 
@@ -67,9 +67,9 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask {
 		self.setLoading(task: nil)
 	}
 
-	mutating func setLoading (task: LoadingTask?, previousValue: Value?) {
+	mutating func setLoading (task: LoadingTask?, value: Value?) {
 		self.cancel()
-		self = .loading(task: task, previousValue: previousValue)
+		self = .loading(task: task, value: value)
 	}
 
 	mutating func setLoading (
@@ -79,10 +79,10 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask {
 	}
 
 	mutating func setLoading (
-		previousValue: Value?,
+		value: Value?,
 		action: () throws -> LoadingTask
 	) rethrows {
-		self.setLoading(task: try action(), previousValue: previousValue)
+		self.setLoading(task: try action(), value: value)
 	}
 
 	mutating func setSuccessful (
@@ -96,7 +96,7 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask {
 		_ failed: Failed
 	) {
 		self.cancel()
-		self = .failed(error: failed, previousValue: value)
+		self = .failed(error: failed, value: value)
 	}
 }
 
@@ -110,7 +110,7 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask, Faile
 		do {
 			self = try .successful(action())
 		} catch {
-			self = .failed(error: error, previousValue: value)
+			self = .failed(error: error, value: value)
 		}
 	}
 	
@@ -123,7 +123,7 @@ public extension LoadableValue where LoadingTask: LoadableCancellableTask, Faile
 		do {
 			self = try await .successful(action())
 		} catch {
-			self = .failed(error: error, previousValue: value)
+			self = .failed(error: error, value: value)
 		}
 	}
 }

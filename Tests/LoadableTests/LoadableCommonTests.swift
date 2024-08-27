@@ -87,7 +87,7 @@ final class LoadableCommonTests: XCTestCase {
 		XCTAssertNil(loadable.failedValue)
 
 		// When
-		loadable = .loading(previousValue: "progress")
+		loadable = .loading(value: "progress")
 		// Then
 		XCTAssertEqual(loadable.value, "progress")
 		XCTAssertEqual(loadable.loadingValue, "progress")
@@ -111,7 +111,7 @@ final class LoadableCommonTests: XCTestCase {
 		XCTAssertNil(loadable.failedValue)
 
 		// When
-		loadable = .failed(error: StubError.instance, previousValue: "error")
+		loadable = .failed(error: StubError.instance, value: "error")
 		// Then
 		XCTAssertEqual(loadable.value, "error")
 		XCTAssertNil(loadable.loadingValue)
