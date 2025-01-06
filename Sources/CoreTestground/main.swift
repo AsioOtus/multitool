@@ -1,28 +1,20 @@
+import Foundation
 import Multitool
+import Combine
 
-var processable = Processable<Int, String, Double, Error>.initial(0)
+public typealias CancellableLoadable<Value> = LoadableValue<Value, Error, Cancellable>
 
+var l = CancellableLoadable<String>.initial
 
-_ = processable.replaceInitialValue(with: "qwe")
-_ = processable.replaceInitial(with: .processing("123"))
+let j = Just("123")
+    .delay(for: .seconds(5), scheduler: DispatchQueue.main)
+    .sink {
+        print($0)
+    } receiveValue: {
+        print($0)
+    }
+    .store(in: &l)
 
-let result = Result<Double, Error>.success(123.5)
+l.cancel()
 
-//processable.set(result: result)
-processable.replace(with: result)
-
-let processable2 = result.processable()
-
-
-var l = Loadable<String>.initial()
-await l.setLoading {
-	Task {
-		""
-	}
-}
-
-let l2 = await Loadable<String>.loading {
-	Task {
-		"qwe"
-	}
-}
+RunLoop.main.run()
