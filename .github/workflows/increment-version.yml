@@ -18,9 +18,11 @@ jobs:
 
     - name: Check if the latest commit is already tagged
       run: |
-        if git describe --exact-match --tags $(git rev-parse HEAD); then
-          echo "Latest commit has tag."
-          exit 0
+        if [ $(git rev-parse --abbrev-ref HEAD) = "main" ]; then
+            if git describe --exact-match --tags $(git rev-parse HEAD); then
+                echo "Latest commit has tag."
+                exit 0
+            fi
         fi
 
     - name: Get the latest tag
