@@ -1,5 +1,3 @@
-public typealias Loadable<Value> = LoadableValue<Value, Error, VoidTask>
-
 public enum LoadableValue <Value, Failed: Error, LoadingTask> {
 	case initial
 	case loading(task: LoadingTask?, value: Value?)
