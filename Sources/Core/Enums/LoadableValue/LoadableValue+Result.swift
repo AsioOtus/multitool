@@ -50,7 +50,7 @@ public extension LoadableValue {
 	}
 }
 
-public extension LoadableValue where LoadingTask: LoadableCancellableTask {
+public extension LoadableValue where LoadingTask: CancellableLoadableTask {
 	mutating func replace (with result: Result<Value, Failed>) {
 		switch result {
 		case .success(let value): self.setSuccessful(value)

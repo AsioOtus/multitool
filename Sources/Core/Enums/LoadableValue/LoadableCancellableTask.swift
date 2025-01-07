@@ -1,5 +1,8 @@
-public protocol LoadableCancellableTask {
+import Combine
+
+public protocol CancellableLoadableTask {
 	func cancel ()
 }
 
-extension Task: LoadableCancellableTask { }
+extension Task: CancellableLoadableTask { }
+extension AnyCancellable: CancellableLoadableTask { }

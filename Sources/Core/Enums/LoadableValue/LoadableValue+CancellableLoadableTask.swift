@@ -1,6 +1,4 @@
-import Combine
-
-public extension LoadableValue where LoadingTask: Cancellable {
+public extension LoadableValue where LoadingTask: CancellableLoadableTask {
     func loading () -> Self {
         .loading(task: loadingTask, value: value)
     }
@@ -10,7 +8,7 @@ public extension LoadableValue where LoadingTask: Cancellable {
     }
 }
 
-public extension LoadableValue where LoadingTask == Cancellable {
+public extension LoadableValue where LoadingTask: CancellableLoadableTask {
     func canceled () -> Self {
         loadingTask?.cancel()
         return self
@@ -72,7 +70,7 @@ public extension LoadableValue where LoadingTask == Cancellable {
     }
 }
 
-public extension LoadableValue where LoadingTask: Cancellable, Failed == Error {
+public extension LoadableValue where LoadingTask: CancellableLoadableTask, Failed == Error {
     mutating func setResult (
         action: () throws -> Value
     ) {
@@ -97,11 +95,5 @@ public extension LoadableValue where LoadingTask: Cancellable, Failed == Error {
         } catch {
             self = .failed(error: error, value: value)
         }
-    }
-}
-
-public extension Cancellable {
-    func store <Value> (in loadable: inout LoadableValue<Value, Error, any Cancellable>) {
-        loadable.setLoading(task: self)
     }
 }
