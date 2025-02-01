@@ -1,6 +1,6 @@
 import Foundation
 
-public struct HSVA: Codable, Hashable  {
+public struct HSVA: Codable, Hashable, Sendable  {
 	public static let black = Self(a: 1)
 	public static let white = Self(h: 1, s: 1, v: 1)
 	public static let transparent = Self(a: 0)

@@ -1,4 +1,4 @@
-public struct RGBA: Codable, Hashable {
+public struct RGBA: Codable, Hashable, Sendable {
 	public static let black = Self(red: 0, green: 0, blue: 0)
 	public static let white = Self(red: 1, green: 1, blue: 1)
 	public static let transparent = Self(red: 0, green: 0, blue: 0, alpha: 0)

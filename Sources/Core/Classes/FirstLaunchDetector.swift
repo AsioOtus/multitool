@@ -1,6 +1,6 @@
 import Foundation
 
-public final class FirstLaunchDetector {
+public final class FirstLaunchDetector: Sendable {
 	public static let shared = FirstLaunchDetector()
 	private static let storageKey = "FirstLaunchDetector.launchCount"
 	

@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:6.0
 
 import PackageDescription
 
@@ -6,7 +6,7 @@ let package = Package(
 	name: "multitool",
   platforms: [
     .iOS(.v13),
-    .macOS(.v10_15),
+    .macOS(.v12),
   ],
 	products: [
 		.library(

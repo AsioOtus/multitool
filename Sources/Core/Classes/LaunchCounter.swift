@@ -1,6 +1,6 @@
 import Foundation
 
-public final class LaunchCounter {
+public final class LaunchCounter: Sendable {
 	public static let `default` = LaunchCounter("default")
 	
 	private static let cycleIdKey = "cycleId"
