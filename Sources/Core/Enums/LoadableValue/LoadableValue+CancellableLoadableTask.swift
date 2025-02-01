@@ -77,11 +77,8 @@ public extension LoadableValue where LoadingTask: CancellableLoadableTask, Faile
         let task = self.loadingTask
         defer { task?.cancel() }
 
-        do {
-            self = try .successful(action())
-        } catch {
-            self = .failed(error: error, value: value)
-        }
+        do { self = try .successful(action()) }
+        catch { self = .failed(error: error, value: value) }
     }
 
     mutating func setResult (
@@ -90,10 +87,7 @@ public extension LoadableValue where LoadingTask: CancellableLoadableTask, Faile
         let task = self.loadingTask
         defer { task?.cancel() }
 
-        do {
-            self = try await .successful(action())
-        } catch {
-            self = .failed(error: error, value: value)
-        }
+        do { self = try await .successful(action()) }
+        catch { self = .failed(error: error, value: value) }
     }
 }

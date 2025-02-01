@@ -33,7 +33,7 @@ public extension LoadableValue {
 
 	var loadingValue:    Value? { if case .loading(_, let value) = self { value } else { nil } }
 	var successfulValue: Value? { if case .successful(let value) = self { value } else { nil } }
-	var failedValue:     Value? { if case .failed(_, let value) = self { value } else { nil } }
+	var failedValue:     Value? { if case .failed(_, let value)  = self { value } else { nil } }
 
 	var loadingTask: LoadingTask? { if case .loading(let task, _) = self { task } else { nil } }
 	var error: Failed? { if case .failed(let error, _) = self { error } else { nil } }
