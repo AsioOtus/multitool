@@ -21,7 +21,7 @@ let package = Package(
 	targets: [
 		.target(
 			name: "Multitool",
-      path: "Sources/Core"
+            path: "Sources/Core"
 		),
 		.target(
 			name: "MultitoolTesting",
