@@ -59,11 +59,15 @@ public extension String {
 	}
 	
 	func index (at offset: Int) -> String.Index? {
-		return self.index(self.startIndex, offsetBy: offset, limitedBy: self.endIndex)
+		index(startIndex, offsetBy: offset, limitedBy: endIndex)
 	}
-	
-	func offset (of index: String.Index) -> Int? {
-		return distance(from: startIndex, to: index)
+
+	func indexOrEnd (at offset: Int) -> String.Index {
+		index(at: offset) ?? self.endIndex
+	}
+
+	func offset (of index: String.Index) -> Int {
+		distance(from: startIndex, to: index)
 	}
 	
 	func offset (of substring: String) -> Int? {
