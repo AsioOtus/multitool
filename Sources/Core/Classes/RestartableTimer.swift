@@ -1,3 +1,6 @@
+import Combine
+import Foundation
+
 extension RestartableTimer {
     public enum Event {
         case tick(Date)

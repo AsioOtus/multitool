@@ -1,4 +1,4 @@
-public protocol PTaskFactory {
+public protocol PTaskFactory: Sendable {
     @discardableResult
     func task <T: Sendable> (
         priority: TaskPriority?,
