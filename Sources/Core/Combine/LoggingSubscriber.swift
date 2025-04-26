@@ -3,8 +3,8 @@ import Foundation
 
 func testLogSubscriber () {
     let s = PassthroughSubject<String, Error>()
-    let ls = s.logSubsriber()
-    
+    let ls = s.log()
+
     s.send("START")
     s.send("111")
     s.send("222")
@@ -17,7 +17,7 @@ func testLogSubscriber () {
     print(ls)
 }
 
-public class LogSubscriber <Output, Failure: Error>: Subscriber {
+public class LoggingSubscriber <Output, Failure: Error> {
     private var lock = NSLock()
 
     private(set) var values = [Output]()
@@ -28,14 +28,20 @@ public class LogSubscriber <Output, Failure: Error>: Subscriber {
     public var lastValue: Output? { values.last }
 
     public var failure: Failure? {
-        if case .failure(let failure) = completion { failure }
-        else { nil }
+        if case .failure(let failure) = completion { failure } else { nil }
     }
 
     public var isCompleted: Bool { completion != nil }
+    public var isFailed: Bool { failure != nil }
 
     public init () { }
 
+    func clearValues () {
+        values = []
+    }
+}
+
+extension LoggingSubscriber: Subscriber {
     public func receive (subscription: any Subscription) {
         lock.lock()
 
@@ -66,7 +72,7 @@ public class LogSubscriber <Output, Failure: Error>: Subscriber {
     }
 }
 
-extension LogSubscriber: Cancellable {
+extension LoggingSubscriber: Cancellable {
     public func cancel() {
         lock.lock()
         let subscription = subscription
@@ -77,7 +83,7 @@ extension LogSubscriber: Cancellable {
     }
 }
 
-extension LogSubscriber: CustomStringConvertible {
+extension LoggingSubscriber: CustomStringConvertible {
     public var description: String {
         """
         First value: \(firstValue.unwrappedDescription)
@@ -96,8 +102,8 @@ fileprivate extension Optional {
 }
 
 public extension Publisher {
-    func logSubsriber () -> LogSubscriber<Output, Failure> {
-        let subsriber = LogSubscriber<Output, Failure>()
+    func log () -> LoggingSubscriber<Output, Failure> {
+        let subsriber = LoggingSubscriber<Output, Failure>()
         self.subscribe(subsriber)
         return subsriber
     }
