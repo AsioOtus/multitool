@@ -1,14 +1,4 @@
 public extension LoadableValue where LoadingTask: CancellableLoadableTask {
-    func loading () -> Self {
-        .loading(task: loadingTask, value: value)
-    }
-
-    static func loading () -> Self {
-        .loading(task: nil, value: nil)
-    }
-}
-
-public extension LoadableValue where LoadingTask: CancellableLoadableTask {
     func canceled () -> Self {
         loadingTask?.cancel()
         return self
@@ -33,8 +23,8 @@ public extension LoadableValue where LoadingTask: CancellableLoadableTask {
         self = self.loading(task: task)
     }
 
-    mutating func setLoading () {
-        self.setLoading(task: nil)
+    mutating func setLoading (action: () throws -> LoadingTask) rethrows {
+        self.setLoading(task: try action())
     }
 
     mutating func setLoading (task: LoadingTask?, value: Value?) {
@@ -42,29 +32,25 @@ public extension LoadableValue where LoadingTask: CancellableLoadableTask {
         self = .loading(task: task, value: value)
     }
 
-    mutating func setLoading (
-        action: () throws -> LoadingTask
-    ) rethrows {
-        self.setLoading(task: try action())
-    }
-
-    mutating func setLoading (
-        value: Value?,
-        action: () throws -> LoadingTask
-    ) rethrows {
+    mutating func setLoading (value: Value?, action: () throws -> LoadingTask) rethrows {
         self.setLoading(task: try action(), value: value)
     }
 
-    mutating func setSuccessful (
-        _ value: Value
-    ) {
+    mutating func setLoading () {
+        self.setLoading(task: nil)
+    }
+
+    mutating func setSuccessful (_ value: Value) {
         self.cancel()
         self = .successful(value)
     }
 
-    mutating func setFailed (
-        _ failed: Failed
-    ) {
+    mutating func setFailed (_ failed: Failed) {
+        self.cancel()
+        self = self.failed(error: failed)
+    }
+
+    mutating func setFailed (_ failed: Failed, value: Value?) {
         self.cancel()
         self = .failed(error: failed, value: value)
     }

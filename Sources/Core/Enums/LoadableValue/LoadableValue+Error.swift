@@ -1,5 +1,5 @@
 public extension LoadableValue where Failed == Error {
-	func result (
+	func perform (
 		action: () throws -> Value
 	) -> Self {
 		do {
@@ -9,7 +9,7 @@ public extension LoadableValue where Failed == Error {
 		}
 	}
 	
-	func result (
+	func perform (
 		action: () async throws -> Value
 	) async -> Self {
 		do {
@@ -19,21 +19,25 @@ public extension LoadableValue where Failed == Error {
 		}
 	}
 
-	static func result (catching: () throws -> Value) -> Self {
-		do {
-			return try .successful(catching())
-		} catch {
-			return .failed(error: error)
-		}
-	}
+    mutating func setPerform (
+        action: () throws -> Value
+    ) {
+        do {
+            try setSuccessful(action())
+        } catch {
+            setFailed(error)
+        }
+    }
 
-	static func result (asyncCatching: () async throws -> Value) async -> Self {
-		do {
-			return try await .successful(asyncCatching())
-		} catch {
-			return .failed(error: error)
-		}
-	}
+    mutating func setPerform (
+        action: () async throws -> Value
+    ) async {
+        do {
+            try await setSuccessful(action())
+        } catch {
+            setFailed(error)
+        }
+    }
 
 	init (catching: () throws -> Value) {
 		do {
@@ -56,9 +60,9 @@ public extension LoadableValue where Failed == Error {
 	) -> LoadableValue<NewValue, Failed, LoadingTask> where Failed == Error {
 		do {
 			return switch self {
-			case .initial:                              .initial
+			case .initial:                      .initial
 			case .loading(let task, let value): .loading(task: task, value: try value.map(mapping))
-			case .successful(let value):                .successful(try mapping(value))
+			case .successful(let value):        .successful(try mapping(value))
 			case .failed(let error, let value): .failed(error: error, value: try value.map(mapping))
 			}
 		} catch {
@@ -71,9 +75,9 @@ public extension LoadableValue where Failed == Error {
 	) -> LoadableValue<Value, Failed, LoadingTask> where Failed == Error {
 		do {
 			return switch self {
-			case .initial:                              .initial
+			case .initial:                      .initial
 			case .loading(let task, let value): .loading(task: task, value: try value.map(mapping))
-			case .successful(let value):                .successful(try mapping(value))
+			case .successful(let value):        .successful(try mapping(value))
 			case .failed(let error, let value): .failed(error: error, value: try value.map(mapping))
 			}
 		} catch {

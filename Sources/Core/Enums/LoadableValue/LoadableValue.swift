@@ -5,6 +5,8 @@ public enum LoadableValue <Value, Failed: Error, LoadingTask> {
 	case failed(error: Failed, value: Value?)
 }
 
+extension LoadableValue: Sendable where Value: Sendable, LoadingTask: Sendable { }
+
 extension LoadableValue: Hashable where Value: Hashable, LoadingTask: Hashable, Failed: Hashable { }
 
 public extension LoadableValue {
@@ -26,7 +28,7 @@ public extension LoadableValue {
 		switch self {
 		case .initial: nil
 		case .loading(_, let value): value
-		case .successful(let successful): successful
+		case .successful(let value): value
 		case .failed(_, let value): value
 		}
 	}
@@ -40,40 +42,51 @@ public extension LoadableValue {
 }
 
 public extension LoadableValue {
-	func loading (value: Value?) -> Self {
-		.loading(task: loadingTask, value: value)
-	}
+    static func loading () -> Self {
+        .loading(task: nil, value: nil)
+    }
+    
+    static func loading (value: Value?) -> Self {
+        .loading(task: nil, value: value)
+    }
 
-	func loading (task: LoadingTask?) -> Self {
-		.loading(task: task, value: value)
-	}
+    static func loading (task: LoadingTask?) -> Self {
+        .loading(task: task, value: nil)
+    }
 
-	func loading (action: () throws -> LoadingTask) rethrows -> Self {
-		loading(task: try action())
-	}
+    static func loading (action: () throws -> LoadingTask) rethrows -> Self {
+        .loading(task: try action(), value: nil)
+    }
 
-	static func loading (value: Value?) -> Self {
-		.loading(task: nil, value: value)
-	}
+    static func loading (value: Value?, action: () throws -> LoadingTask) rethrows -> Self {
+        .loading(task: try action(), value: value)
+    }
 
-	static func loading (task: LoadingTask?) -> Self {
-		.loading(task: task, value: nil)
-	}
+    static func failed (error: Failed) -> Self {
+        .failed(error: error, value: nil)
+    }
+}
 
-	static func loading (
-		value: Value? = nil,
-		action: () throws -> LoadingTask
-	) rethrows -> Self {
-		.loading(task: try action(), value: value)
-	}
+public extension LoadableValue {
+    func loading () -> Self {
+        .loading(task: loadingTask, value: value)
+    }
 
-	func failed (error: Failed) -> Self {
-		.failed(error: error, value: value)
-	}
+    func loading (value: Value?) -> Self {
+        .loading(task: loadingTask, value: value)
+    }
 
-	static func failed (error: Failed) -> Self {
-		.failed(error: error, value: nil)
-	}
+    func loading (task: LoadingTask?) -> Self {
+        .loading(task: task, value: value)
+    }
+
+    func loading (action: () throws -> LoadingTask) rethrows -> Self {
+        .loading(task: try action(), value: value)
+    }
+
+    func failed (error: Failed) -> Self {
+        .failed(error: error, value: value)
+    }
 }
 
 public extension LoadableValue {
@@ -85,57 +98,48 @@ public extension LoadableValue {
 		self = .initial
 	}
 
-	mutating func setSuccessful (
-		_ value: Value
-	) {
-		self = .successful(value)
-	}
-
-	mutating func setFailed (
-		_ failed: Failed
-	) {
-		self = .failed(error: failed, value: value)
-	}
+    mutating func setLoading () {
+        self = self.loading(task: nil)
+    }
 
 	mutating func setLoading (task: LoadingTask?) {
 		self = self.loading(task: task)
 	}
 
-	mutating func setLoading (task: LoadingTask?, value: Value?) {
+    mutating func setLoading (action: () throws -> LoadingTask) rethrows {
+        self = self.loading(task: try action())
+    }
+
+    mutating func setLoading (task: LoadingTask?, value: Value?) {
 		self = .loading(task: task, value: value)
 	}
 
-	mutating func setLoading () {
-		self.setLoading(task: nil)
-	}
+    mutating func setLoading (value: Value?, action: () throws -> LoadingTask) rethrows {
+        self = .loading(task: try action(), value: value)
+    }
 
-	mutating func setLoading (
-		action: () throws -> LoadingTask
-	) rethrows {
-		self.setLoading(task: try action())
-	}
+    mutating func setSuccessful (_ value: Value) {
+        self = .successful(value)
+    }
+
+    mutating func setFailed (_ failed: Failed) {
+        self = self.failed(error: failed)
+    }
+
+    mutating func setFailed (_ failed: Failed, value: Value?) {
+        self = .failed(error: failed, value: value)
+    }
 }
 
 public extension LoadableValue {
-	func mapValue <NewValue> (
-		_ mapping: (Value) -> NewValue
-	) -> LoadableValue<NewValue, Failed, LoadingTask> {
+    func mapValue <NewValue> (
+        _ mapping: (Value) -> NewValue
+    ) -> LoadableValue<NewValue, Failed, LoadingTask> {
 		switch self {
-		case .initial:                               .initial
-		case .loading(let task, let value):  .loading(task: task, value: value.map(mapping))
-		case .successful(let value):                 .successful(mapping(value))
-		case .failed(let error, let value):  .failed(error: error, value: value.map(mapping))
-		}
-	}
-
-	func mapSuccessfulValue (
-		_ mapping: (Value) -> Value
-	) -> LoadableValue<Value, Failed, LoadingTask> {
-		switch self {
-		case .initial:                               .initial
-		case .loading(let task, let value):  .loading(task: task, value: value)
-		case .successful(let value):                 .successful(mapping(value))
-		case .failed(let error, let value):  .failed(error: error, value: value)
+		case .initial:                      .initial
+		case .loading(let task, let value): .loading(task: task, value: value.map(mapping))
+		case .successful(let value):        .successful(mapping(value))
+		case .failed(let error, let value): .failed(error: error, value: value.map(mapping))
 		}
 	}
 
@@ -143,12 +147,23 @@ public extension LoadableValue {
 		_ mapping: (Value) throws -> NewValue
 	) rethrows -> LoadableValue<NewValue, Failed, LoadingTask> {
 		switch self {
-		case .initial:                               .initial
-		case .loading(let task, let value):  .loading(task: task, value: try value.map(mapping))
-		case .successful(let value):                 .successful(try mapping(value))
-		case .failed(let error, let value):  .failed(error: error, value: try value.map(mapping))
+		case .initial:                      .initial
+		case .loading(let task, let value): .loading(task: task, value: try value.map(mapping))
+		case .successful(let value):        .successful(try mapping(value))
+		case .failed(let error, let value): .failed(error: error, value: try value.map(mapping))
 		}
 	}
+
+    func mapSuccessfulValue (
+        _ mapping: (Value) -> Value
+    ) -> LoadableValue<Value, Failed, LoadingTask> {
+        switch self {
+        case .initial:                      .initial
+        case .loading(let task, let value): .loading(task: task, value: value)
+        case .successful(let value):        .successful(mapping(value))
+        case .failed(let error, let value): .failed(error: error, value: value)
+        }
+    }
 
 	func replaceValue <NewValue> (with newValue: NewValue) -> LoadableValue<NewValue, Failed, LoadingTask> {
 		mapValue { _ in newValue }

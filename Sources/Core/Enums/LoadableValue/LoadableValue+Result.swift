@@ -8,14 +8,18 @@ public extension Result {
 }
 
 public extension Result {
-	func loadable <Value> (_ mapping: (Success) -> LoadableValue<Value, Error, VoidTask>) -> LoadableValue<Value, Error, VoidTask> {
+    func loadable <Value> (
+        _ mapping: (Success) -> LoadableValue<Value, Error, VoidTask>
+    ) -> LoadableValue<Value, Error, VoidTask> {
 		switch self {
 		case .success(let success): mapping(success)
 		case .failure(let failure): .failed(error: failure)
 		}
 	}
 
-	func loadable <Value> (_ mapping: (Success) -> Value) -> LoadableValue<Value, Error, VoidTask> {
+    func loadable <Value> (
+        _ mapping: (Success) -> Value
+    ) -> LoadableValue<Value, Error, VoidTask> {
 		switch self {
 		case .success(let success): .successful(mapping(success))
 		case .failure(let failure): .failed(error: failure)

@@ -59,7 +59,7 @@ final class LoadableErrorTests: XCTestCase {
 		let loadable = Loadable.loading(value: "progress")
 
 		// When
-		let result = loadable.result {
+		let result = loadable.perform {
 			"success"
 		}
 		// Then
@@ -71,7 +71,7 @@ final class LoadableErrorTests: XCTestCase {
 		let loadable = Loadable.loading(value: "progress")
 
 		// When
-		let result = loadable.result {
+		let result = loadable.perform {
 			throw StubError.instance
 		}
 		// Then

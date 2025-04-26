@@ -21,10 +21,11 @@ final class LoadableLoadingTests: XCTestCase {
 		let loadable = Loadable.loading(task: task, value: "progress")
 
 		// When
-		let newLoadable = loadable.loading(task: task)
+        let newTask = VoidTask { }
+		let newLoadable = loadable.loading(task: newTask)
 
 		// Then
-		XCTAssertEqual(newLoadable, .loading(task: task, value: "progress"))
+		XCTAssertEqual(newLoadable, .loading(task: newTask, value: "progress"))
 	}
 
 	func test_loading_newTaskWithAction_shouldContainsNewTaskAndOldValue () {
@@ -33,13 +34,14 @@ final class LoadableLoadingTests: XCTestCase {
 		let loadable = Loadable.loading(task: task, value: "progress")
 
 		// When
-		let newLoadable = loadable.loading { task }
+        let newTask = VoidTask { }
+		let newLoadable = loadable.loading { newTask }
 
 		// Then
-		XCTAssertEqual(newLoadable, .loading(task: task, value: "progress"))
+		XCTAssertEqual(newLoadable, .loading(task: newTask, value: "progress"))
 	}
 
-	func test_staticLoading_newvalue_shouldContainsOldValue () {
+	func test_staticLoading_newValue_shouldContainsOldValue () {
 		// When
 		let newLoadable = Loadable.loading(value: "new progress")
 
@@ -58,7 +60,7 @@ final class LoadableLoadingTests: XCTestCase {
 		XCTAssertEqual(newLoadable, .loading(task: task, value: nil))
 	}
 
-	func test_staticLoading_newTaskWithActionAndvalue_shouldContainsNewTask () {
+	func test_staticLoading_newTaskWithActionAndValue_shouldContainsNewTask () {
 		// Given
 		let task = VoidTask { }
 
