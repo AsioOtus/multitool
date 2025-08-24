@@ -46,13 +46,6 @@ let package = Package(
 				"Multitool",
 				"MultitoolTesting"
 			]
-		),
-		.testTarget(
-			name: "LoadableTests",
-			dependencies: [
-				"Multitool",
-				"MultitoolTesting"
-			]
-		),
+		)
 	]
 )
