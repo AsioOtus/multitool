@@ -60,20 +60,20 @@ public extension LoadableValue where LoadingTask: CancellableLoadableTask, Faile
     mutating func setResult (
         action: () throws -> Value
     ) {
-        let task = self.loadingTask
-        defer { task?.cancel() }
-
-        do { self = try .successful(action()) }
-        catch { self = .failed(error: error, value: value) }
+        do {
+            self.setSuccessful(try action())
+        } catch {
+            self.setFailed(error)
+        }
     }
 
     mutating func setResult (
-        action: () async throws -> Value
+        action: @Sendable () async throws -> Value
     ) async {
-        let task = self.loadingTask
-        defer { task?.cancel() }
-
-        do { self = try await .successful(action()) }
-        catch { self = .failed(error: error, value: value) }
+        do {
+            self.setSuccessful(try await action())
+        } catch {
+            self.setFailed(error)
+        }
     }
 }
